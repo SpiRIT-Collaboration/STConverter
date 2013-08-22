@@ -17,21 +17,27 @@ ClassImp(SPiRITEvent);
 
 SPiRITEvent::SPiRITEvent() {
   currentPadNo = 0;
+
+  for (Int_t iPad = 0; iPad < 12096; iPad++) {
+    pads[iPad] = 0;
+    isPadFired[iPad] = 0;
+  }
 }
 
 SPiRITEvent::~SPiRITEvent() {
   for (Int_t iPad = 0; iPad < 12096; iPad++)
-    if (isPadFired[iPad])
+    if (isPadFired[iPad]) {
       delete pads[iPad];
+
+      isPadFired[iPad] = 0;
+      pads[iPad] = 0;
+    }
 }
 
 void SPiRITEvent::PrintPads() {
-  Int_t padNo = 0;
   for (Int_t iPad = 0; iPad < 12096; iPad++)
-    if (isPadFired[iPad]) {
-      cout << "Pad Number: " << setw(5) << padNo << " (" << setw(3) << iPad%108 << ", " << setw(3) << iPad/108 << ")" << endl;
-        padNo++;
-      }
+    if (isPadFired[iPad])
+      cout << "Pad Number: " << setw(5) << iPad << " (" << setw(3) << iPad%108 << ", " << setw(3) << iPad/108 << ")" << endl;
 }
 
 // Setters

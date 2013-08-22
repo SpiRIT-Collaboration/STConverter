@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <arpa/inet.h>
 
 #include "SPiRITReadRaw.hh"
 
@@ -191,10 +192,11 @@ SPiRITEvent *SPiRITReadRaw::GetEvent() {
   }
 
   anEvent = new SPiRITEvent();
+  SPiRITPad *pad = NULL;
   Int_t padIdx = 0;
   for (Int_t agetIdx = 0; agetIdx < 4; agetIdx++) {
     for (Int_t chanIdx = 0; chanIdx < 68; chanIdx++) {
-      SPiRITPad *pad = new SPiRITPad();
+      pad = new SPiRITPad();
 
       Int_t row, layer;
       mapper -> GetRowNLayer((Int_t)coboIdx, (Int_t)asadIdx, agetIdx, chanIdx, row, layer);
@@ -226,6 +228,8 @@ SPiRITEvent *SPiRITReadRaw::GetEvent() {
         delete pad;
       else
         anEvent -> SetPad(pad);
+
+      pad = NULL;
     }
   }
 
