@@ -12,31 +12,31 @@
 #define SPIRITEVENT_H
 
 #include "TROOT.h"
+#include "TObject.h"
 
 #include "SPiRITPad.hh"
 
-class SPiRITEvent {
+class SPiRITEvent : public TObject {
   public:
     SPiRITEvent();
     ~SPiRITEvent();
 
     void PrintPads();
+    void GoFirst() { currentPadNo = 0; }
 
     // Setters
     void SetPad(SPiRITPad *pad);
 
     // Getters
     SPiRITPad *GetNextPad();
-    SPiRITPad *GetPad(Short_t row, Short_t layer); 
+    SPiRITPad *GetPad(Int_t row, Int_t layer); 
     Int_t GetNumPads();
 
   private:
-    Bool_t isPadFired[108][112];
-    SPiRITPad *pads[108][112];
+    Bool_t isPadFired[12096];
+    SPiRITPad *pads[12096];
     Int_t firedPads;
-    Short_t currentPadNo;
-    Short_t currentRow;
-    Short_t currentLayer;
+    Int_t currentPadNo;
 
   ClassDef(SPiRITEvent, 1);
 };

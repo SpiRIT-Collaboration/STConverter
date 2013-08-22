@@ -14,13 +14,14 @@
 #define STPCMAP_H
 
 #include "TROOT.h"
+#include "TObject.h"
 
-class SPiRITMap {
+class SPiRITMap : public TObject {
   public:
     SPiRITMap();
     ~SPiRITMap() {};
 
-    void GetRowNLayer(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chIdx, Short_t &padRow, Short_t &padLayer);
+    void GetRowNLayer(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chIdx, Int_t &padRow, Int_t &padLayer);
 
   private:
     Int_t padRowOfCh[68];

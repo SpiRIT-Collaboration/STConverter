@@ -42,6 +42,8 @@ void SPiRITPedestal::SetPedestalData(Char_t *pedestalData) {
 }
 
 void SPiRITPedestal::GetPedestal(Int_t *samples, Double_t *pedestalArray) {
+  Initialize();
+  
   Int_t numPedestalSamples = 20;
 
   for (Int_t i = 0; i < numPedestalSamples; i++)

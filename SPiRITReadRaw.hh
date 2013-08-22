@@ -12,14 +12,16 @@
 #ifndef SPIRITPROCESSRAW_H
 #define SPIRITPROCESSRAW_H
 
-#include "TROOT.h"
 #include <fstream>
+
+#include "TROOT.h"
+#include "TObject.h"
 
 class SPiRITEvent;
 class SPiRITMap;
 class SPiRITPedestal;
 
-class SPiRITReadRaw {
+class SPiRITReadRaw : public TObject {
   public:
     SPiRITReadRaw() { Initialize(); }
     SPiRITReadRaw(Char_t *filename) { SetRawfile(filename); Initialize(); }
@@ -39,6 +41,8 @@ class SPiRITReadRaw {
     SPiRITEvent *anEvent;
     SPiRITMap *mapper;
     SPiRITPedestal *pedestal;
+
+    Bool_t usePedestalData;
 
   ClassDef(SPiRITReadRaw, 1);
 };

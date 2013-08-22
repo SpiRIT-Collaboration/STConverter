@@ -22,7 +22,7 @@ SPiRITMap::SPiRITMap() {
   memcpy(padLayerOfCh, definePadLayerOfCh, sizeof(definePadLayerOfCh));
 }
 
-void SPiRITMap::GetRowNLayer(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chIdx, Short_t &padRow, Short_t &padLayer) {
+void SPiRITMap::GetRowNLayer(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chIdx, Int_t &padRow, Int_t &padLayer) {
   if (padLayerOfCh[chIdx] == -2) {
     padLayer = -2;
     padRow = -2;
@@ -31,7 +31,8 @@ void SPiRITMap::GetRowNLayer(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t 
   }
 
   padRow = coboIdx*9 + padRowOfCh[chIdx];
-  padLayer = asadIdx*28 + agetIdx*7 + padLayerOfCh[chIdx];
+//  padLayer = asadIdx*28 + agetIdx*7 + padLayerOfCh[chIdx];
+  padLayer = asadIdx*28 + (3 - agetIdx)*7 + padLayerOfCh[chIdx];
 
   return;
 }

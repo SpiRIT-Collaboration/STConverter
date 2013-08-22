@@ -12,8 +12,9 @@
 #define SPIRITPAD_H
 
 #include "TROOT.h"
+#include "TObject.h"
 
-class SPiRITPad {
+class SPiRITPad : public TObject {
 public:
   SPiRITPad()
     { padLayer = -2; padRow = -2; Initialize(); }
@@ -25,24 +26,25 @@ public:
   void Process();
 
   // Setters
-  void SetPadLayer(Short_t val) { padLayer = val; }
-  void SetPadRow(Short_t val) { padRow = val; }
+  void SetPadLayer(Int_t val) { padLayer = val; }
+  void SetPadRow(Int_t val) { padRow = val; }
   void SetADC(Double_t *val) { for (Int_t i = 0; i < 512; i++) ADC[i] = val[i]; };
-  void SetADC(Short_t idx, Double_t val) { ADC[idx] = val; };
+  void SetADC(Int_t idx, Double_t val) { ADC[idx] = val; };
 
   // Getters
-  Short_t GetPadLayer() { return padLayer; }
-  Short_t GetPadRow() { return padRow; }
+  Int_t GetPadLayer() { return padLayer; }
+  Int_t GetPadRow() { return padRow; }
   Double_t *GetADC() { return ADC; }
   Double_t GetADC(Int_t idx) { return ADC[idx]; }
-  Short_t GetNumPeaks();
+  Int_t GetMaxADCIdx() { return maxADCIdx; }
+  Int_t GetNumPeaks();
 
 private:
-  Short_t padLayer;
-  Short_t padRow;  
+  Int_t padLayer;
+  Int_t padRow;  
 
   Bool_t isPeak[512];
-  Short_t maxADCIdx;
+  Int_t maxADCIdx;
   Double_t ADC[512];
   
   ClassDef(SPiRITPad, 1);

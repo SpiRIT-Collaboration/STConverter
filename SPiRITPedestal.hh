@@ -14,13 +14,14 @@
 #define STPCPEDESTAL_H
 
 #include "TROOT.h"
+#include "TObject.h"
 
 class TFile;
 class TTree;
 
 #include <fstream>
 
-class SPiRITPedestal {
+class SPiRITPedestal : public TObject {
   public:
     SPiRITPedestal();
     SPiRITPedestal(Char_t *pedestalData);

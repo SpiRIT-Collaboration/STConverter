@@ -30,11 +30,15 @@ void SPiRITReadRaw::SetRawfile(Char_t *filename)
 
 void SPiRITReadRaw::SetPedestalData(Char_t *filename)
 {
+  usePedestalData = 1;
+
   pedestal -> SetPedestalData(filename);
 }
 
 void SPiRITReadRaw::Initialize()
 {
+  usePedestalData = 0;
+
   mapper = new SPiRITMap();
   pedestal = new SPiRITPedestal();
 }
@@ -192,17 +196,26 @@ SPiRITEvent *SPiRITReadRaw::GetEvent() {
     for (Int_t chanIdx = 0; chanIdx < 68; chanIdx++) {
       SPiRITPad *pad = new SPiRITPad();
 
-      Short_t row, layer;
+      Int_t row, layer;
       mapper -> GetRowNLayer((Int_t)coboIdx, (Int_t)asadIdx, agetIdx, chanIdx, row, layer);
 
+      if (row == -2 || layer == -2) {
+        delete pad;
+        continue;
+      }
+
+      pad -> SetPadRow(row);
+      pad -> SetPadLayer(layer);
+
       Double_t ped[2];
-//      pedestal -> GetPedestal(rawdata[agetIdx][chanIdx], ped);
-      
-      pedestal -> GetPedestal(coboIdx, asadIdx, agetIdx, chanIdx, ped);
+      if (usePedestalData == 0)
+        pedestal -> GetPedestal(rawdata[agetIdx][chanIdx], ped);
+      else
+        pedestal -> GetPedestal(coboIdx, asadIdx, agetIdx, chanIdx, ped);
 
       for (Int_t buckIdx = 0; buckIdx < 512; buckIdx++) {
         if (rawdata[agetIdx][chanIdx][buckIdx] < ped[0] - 5*ped[1])
-          pad -> SetADC(buckIdx, ped[0] - rawdata[agetIdx][chanIdx][buckIdx]);
+          pad -> SetADC(buckIdx, ped[0] - 5*ped[1] - rawdata[agetIdx][chanIdx][buckIdx]);
         else
           pad -> SetADC(buckIdx, 0);
       }
