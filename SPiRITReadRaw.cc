@@ -128,8 +128,9 @@ SPiRITEvent *SPiRITReadRaw::GetEvent() {
    */
   std::cout << "eventIdx: " << htonl(eventIdx) << std::endl;
 
+  eventIdx = htonl(eventIdx);
   coboIdx = (htons(coboIdx) >> 8);
-  asadIdx = (htons(coboIdx) >> 8);
+  asadIdx = (htons(asadIdx) >> 8);
   /*
      cout << "coboIdx: " << (htons(coboIdx) >> 8) << endl;
      cout << "asadIdx: " << (htons(asadIdx) >> 8) << endl;
@@ -192,6 +193,7 @@ SPiRITEvent *SPiRITReadRaw::GetEvent() {
   }
 
   anEvent = new SPiRITEvent();
+  anEvent -> SetEventID(eventIdx);
   SPiRITPad *pad = NULL;
   Int_t padIdx = 0;
   for (Int_t agetIdx = 0; agetIdx < 4; agetIdx++) {

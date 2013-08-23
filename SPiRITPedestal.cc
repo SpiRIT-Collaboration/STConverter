@@ -12,6 +12,7 @@
 
 #include "SPiRITPedestal.hh"
 
+#include "Riostream.h"
 #include "TMath.h"
 #include "TFile.h"
 #include "TTree.h"
@@ -29,11 +30,17 @@ SPiRITPedestal::SPiRITPedestal(Char_t *pedestalData) {
 }
 
 void SPiRITPedestal::Initialize() {
+  openFile = NULL;
+  pedestalTree = NULL;
+
   pedestal = 0;
   pedestalSigma = 0;
 }
 
 void SPiRITPedestal::SetPedestalData(Char_t *pedestalData) {
+  if (openFile != NULL)
+    delete openFile;
+
   openFile = new TFile(pedestalData);
 
   pedestalTree = (TTree *) openFile -> Get("pedestal");
@@ -61,6 +68,11 @@ void SPiRITPedestal::GetPedestal(Int_t *samples, Double_t *pedestalArray) {
 }
 
 void SPiRITPedestal::GetPedestal(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chIdx, Double_t *pedestalArray) {
+  if (openFile == NULL) {
+    cerr << "Pedestal data file is not set!" << endl;
+
+    return;
+  }
   // To one CoBo, connected are 4 AsAds, one of which has 4 AGETs composed of 68 channels
   Int_t pedestalIndex = coboIdx*(68*4*4) + asadIdx*(68*4) + agetIdx*68 + chIdx;
 

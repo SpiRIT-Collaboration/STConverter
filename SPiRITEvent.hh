@@ -22,21 +22,24 @@ class SPiRITEvent : public TObject {
     ~SPiRITEvent();
 
     void PrintPads();
-    void GoFirst() { currentPadNo = 0; }
+    void GotoFirst();
 
     // Setters
+    void SetEventID(Int_t evtid);
     void SetPad(SPiRITPad *pad);
 
     // Getters
-    SPiRITPad *GetNextPad();
-    SPiRITPad *GetPad(Int_t row, Int_t layer); 
+    Int_t GetEventID();
     Int_t GetNumPads();
+    SPiRITPad *GetNextPad();
+    SPiRITPad *GetPad(Int_t padNo);
+    SPiRITPad *GetPad(Int_t row, Int_t layer); 
 
   private:
-    Bool_t isPadFired[12096];
-    SPiRITPad *pads[12096];
+    Int_t eventID;
     Int_t firedPads;
     Int_t currentPadNo;
+    SPiRITPad *pads[12096];
 
   ClassDef(SPiRITEvent, 1);
 };

@@ -67,6 +67,7 @@ gSystem -> Load("libSPiRIT.so");
 
   ResetCanvas();
 
+  delete anEvent;
   anEvent = readraw -> GetEvent();
 
   Int_t numPads = anEvent -> GetNumPads();
