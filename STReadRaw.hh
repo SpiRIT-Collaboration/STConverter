@@ -1,31 +1,31 @@
 // =================================================
-//  SPiRITReadRaw Class
+//  STReadRaw Class
 // 
 //  Description:
 //    Read the raw file from CoBo and process it
-//    into SPiRITEvent class.
+//    into STEvent class.
 // 
 //  Genie Jhang ( geniejhang@majimak.com )
 //  2013. 08. 16
 // =================================================
 
-#ifndef SPIRITPROCESSRAW_H
-#define SPIRITPROCESSRAW_H
+#ifndef STPROCESSRAW_H
+#define STPROCESSRAW_H
 
 #include <fstream>
 
 #include "TROOT.h"
 #include "TObject.h"
 
-class SPiRITEvent;
-class SPiRITMap;
-class SPiRITPedestal;
+class STEvent;
+class STMap;
+class STPedestal;
 
-class SPiRITReadRaw : public TObject {
+class STReadRaw : public TObject {
   public:
-    SPiRITReadRaw() { Initialize(); }
-    SPiRITReadRaw(Char_t *filename) { SetRawfile(filename); Initialize(); }
-    ~SPiRITReadRaw() {}
+    STReadRaw() { Initialize(); }
+    STReadRaw(Char_t *filename) { SetRawfile(filename); Initialize(); }
+    ~STReadRaw() {}
 
     void Initialize();
 
@@ -34,17 +34,17 @@ class SPiRITReadRaw : public TObject {
     void SetPedestalData(Char_t *filename);
 
     // Getters
-    SPiRITEvent *GetEvent();
+    STEvent *GetEvent();
 
   private:
     std::ifstream rawfile;
-    SPiRITEvent *anEvent;
-    SPiRITMap *mapper;
-    SPiRITPedestal *pedestal;
+    STEvent *anEvent;
+    STMap *mapper;
+    STPedestal *pedestal;
 
     Bool_t usePedestalData;
 
-  ClassDef(SPiRITReadRaw, 1);
+  ClassDef(STReadRaw, 1);
 };
 
 #endif

@@ -1,5 +1,5 @@
 // =================================================
-//  SPiRITPedestal Class
+//  STPedestal Class
 // 
 //  Description:
 //    This class is used for calculating or finding
@@ -10,8 +10,8 @@
 //  2013. 08. 14
 // =================================================
 
-#ifndef STPCPEDESTAL_H
-#define STPCPEDESTAL_H
+#ifndef STPEDESTAL_H
+#define STPEDESTAL_H
 
 #include "TROOT.h"
 #include "TObject.h"
@@ -21,11 +21,11 @@ class TTree;
 
 #include <fstream>
 
-class SPiRITPedestal : public TObject {
+class STPedestal : public TObject {
   public:
-    SPiRITPedestal();
-    SPiRITPedestal(Char_t *pedestalData);
-    ~SPiRITPedestal() {};
+    STPedestal();
+    STPedestal(Char_t *pedestalData);
+    ~STPedestal() {};
 
     void Initialize();
     void SetPedestalData(Char_t *pedestalData);
@@ -43,7 +43,7 @@ class SPiRITPedestal : public TObject {
     Double_t pedestal;
     Double_t pedestalSigma;
 
-  ClassDef(SPiRITPedestal, 1);
+  ClassDef(STPedestal, 1);
 };
 
 #endif

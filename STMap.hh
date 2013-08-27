@@ -1,5 +1,5 @@
 // =================================================
-//  SPiRITMap Class
+//  STMap Class
 // 
 //  Description:
 //    This class is used for finding the local pad
@@ -10,16 +10,16 @@
 //  2013. 08. 13
 // =================================================
 
-#ifndef STPCMAP_H
-#define STPCMAP_H
+#ifndef STMAP_H
+#define STMAP_H
 
 #include "TROOT.h"
 #include "TObject.h"
 
-class SPiRITMap : public TObject {
+class STMap : public TObject {
   public:
-    SPiRITMap();
-    ~SPiRITMap() {};
+    STMap();
+    ~STMap() {};
 
     void GetRowNLayer(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chIdx, Int_t &padRow, Int_t &padLayer);
 
@@ -27,7 +27,7 @@ class SPiRITMap : public TObject {
     Int_t padRowOfCh[68];
     Int_t padLayerOfCh[68];
 
-  ClassDef(SPiRITMap, 1);
+  ClassDef(STMap, 1);
 };
 
 #endif

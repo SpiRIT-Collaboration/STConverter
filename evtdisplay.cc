@@ -8,13 +8,13 @@
 #include "TClonesArray.h"
 
 #ifndef __CINT__
-#include "SPiRITReadRaw.hh"
-#include "SPiRITEvent.hh"
-#include "SPiRITPad.hh"
+#include "STReadRaw.hh"
+#include "STEvent.hh"
+#include "STPad.hh"
 #else
-class SPiRITReadRaw;
-class SPiRITEvent;
-class SPiRITPad;
+class STReadRaw;
+class STEvent;
+class STPad;
 #endif
 
 gSystem -> Load("libSPiRIT.so");
@@ -41,9 +41,9 @@ TH2D *timeplane[7*4];
   TLine *layer3Line[5];
 */
 
-SPiRITReadRaw *readraw;
-SPiRITEvent *anEvent;
-SPiRITPad *aPad;
+STReadRaw *readraw;
+STEvent *anEvent;
+STPad *aPad;
 TPaletteAxis *axis;
 
 Char_t *outDir;
@@ -135,7 +135,7 @@ void evtdisplay(Char_t *rawdata, Char_t *pedestaldata, Char_t *outdir) {
 
   outDir = outdir;
 
-  readraw = new SPiRITReadRaw(rawdata);
+  readraw = new STReadRaw(rawdata);
   if (pedestaldata != NULL)
     readraw -> SetPedestalData(pedestaldata);
 

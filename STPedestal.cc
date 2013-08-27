@@ -1,5 +1,5 @@
 // =================================================
-//  SPiRITPedestal Class
+//  STPedestal Class
 // 
 //  Description:
 //    This class is used for calculating or finding
@@ -10,26 +10,26 @@
 //  2013. 08. 14
 // =================================================
 
-#include "SPiRITPedestal.hh"
+#include "STPedestal.hh"
 
 #include "Riostream.h"
 #include "TMath.h"
 #include "TFile.h"
 #include "TTree.h"
 
-ClassImp(SPiRITPedestal);
+ClassImp(STPedestal);
 
-SPiRITPedestal::SPiRITPedestal() {
+STPedestal::STPedestal() {
   Initialize();
 }
 
-SPiRITPedestal::SPiRITPedestal(Char_t *pedestalData) {
+STPedestal::STPedestal(Char_t *pedestalData) {
   Initialize();
 
   SetPedestalData(pedestalData);
 }
 
-void SPiRITPedestal::Initialize() {
+void STPedestal::Initialize() {
   openFile = NULL;
   pedestalTree = NULL;
 
@@ -37,7 +37,7 @@ void SPiRITPedestal::Initialize() {
   pedestalSigma = 0;
 }
 
-void SPiRITPedestal::SetPedestalData(Char_t *pedestalData) {
+void STPedestal::SetPedestalData(Char_t *pedestalData) {
   if (openFile != NULL)
     delete openFile;
 
@@ -48,7 +48,7 @@ void SPiRITPedestal::SetPedestalData(Char_t *pedestalData) {
     pedestalTree -> SetBranchAddress("pedestalSigma", &pedestalSigma);
 }
 
-void SPiRITPedestal::GetPedestal(Int_t *samples, Double_t *pedestalArray) {
+void STPedestal::GetPedestal(Int_t *samples, Double_t *pedestalArray) {
   Initialize();
   
   Int_t numPedestalSamples = 20;
@@ -67,7 +67,7 @@ void SPiRITPedestal::GetPedestal(Int_t *samples, Double_t *pedestalArray) {
   return;
 }
 
-void SPiRITPedestal::GetPedestal(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chIdx, Double_t *pedestalArray) {
+void STPedestal::GetPedestal(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chIdx, Double_t *pedestalArray) {
   if (openFile == NULL) {
     cerr << "Pedestal data file is not set!" << endl;
 

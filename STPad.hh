@@ -1,5 +1,5 @@
 // =================================================
-//  SPiRITPad Class
+//  STPad Class
 //
 //  Description:
 //    Container for a pad data
@@ -8,19 +8,19 @@
 //  2013. 08. 16
 // ================================================= 
 
-#ifndef SPIRITPAD_H
-#define SPIRITPAD_H
+#ifndef STPAD_H
+#define STPAD_H
 
 #include "TROOT.h"
 #include "TObject.h"
 
-class SPiRITPad : public TObject {
+class STPad : public TObject {
 public:
-  SPiRITPad()
+  STPad()
     { padLayer = -2; padRow = -2; Initialize(); }
-  SPiRITPad(Int_t row, Int_t layer)
+  STPad(Int_t row, Int_t layer)
     { padRow = row; padLayer = layer; Initialize(); }
-  ~SPiRITPad() {}
+  ~STPad() {}
   
   void Initialize();
   void Process();
@@ -47,7 +47,7 @@ private:
   Int_t maxADCIdx;
   Double_t ADC[512];
   
-  ClassDef(SPiRITPad, 1);
+  ClassDef(STPad, 1);
 };
 
 #endif

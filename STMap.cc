@@ -1,5 +1,5 @@
 // =================================================
-//  SPiRITMap Class
+//  STMap Class
 // 
 //  Description:
 //    This class is used for finding the local pad
@@ -10,11 +10,11 @@
 //  2013. 08. 13
 // =================================================
 
-#include "SPiRITMap.hh"
+#include "STMap.hh"
 
-ClassImp(SPiRITMap);
+ClassImp(STMap);
 
-SPiRITMap::SPiRITMap() {
+STMap::STMap() {
   Int_t definePadRowOfCh[68] = {-2,1,2,2,2,1,3,1,3,0,3,-2,0,4,0,4,2,4,1,3,0,3,-2,0,3,0,3,0,2,1,2,1,2,1,7,6,6,6,7,5,7,5,8,5,8,-2,4,8,5,6,4,7,4,8,4,8,-2,5,8,5,8,5,7,6,7,6,7,6};
   Int_t definePadLayerOfCh[68] = {-2,0,1,0,2,1,0,2,1,0,2,-2,1,0,2,1,3,2,3,3,3,4,-2,4,5,5,6,6,6,6,4,4,5,5,2,0,2,1,0,0,1,1,0,2,1,-2,3,2,3,3,4,3,5,3,6,4,-2,5,5,4,6,6,5,6,4,4,6,5};
 
@@ -22,7 +22,7 @@ SPiRITMap::SPiRITMap() {
   memcpy(padLayerOfCh, definePadLayerOfCh, sizeof(definePadLayerOfCh));
 }
 
-void SPiRITMap::GetRowNLayer(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chIdx, Int_t &padRow, Int_t &padLayer) {
+void STMap::GetRowNLayer(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chIdx, Int_t &padRow, Int_t &padLayer) {
   if (padLayerOfCh[chIdx] == -2) {
     padLayer = -2;
     padRow = -2;

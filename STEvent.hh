@@ -1,5 +1,5 @@
 // =================================================
-//  SPiRITEvent Class                          
+//  STEvent Class                          
 //                                                  
 //  Description:                                    
 //    Container for an event data
@@ -8,40 +8,40 @@
 //  2013. 08. 16                                    
 // =================================================
 
-#ifndef SPIRITEVENT_H
-#define SPIRITEVENT_H
+#ifndef STEVENT_H
+#define STEVENT_H
 
 #include "TROOT.h"
 #include "TObject.h"
 
-#include "SPiRITPad.hh"
+#include "STPad.hh"
 
-class SPiRITEvent : public TObject {
+class STEvent : public TObject {
   public:
-    SPiRITEvent();
-    ~SPiRITEvent();
+    STEvent();
+    ~STEvent();
 
     void PrintPads();
     void GotoFirst();
 
     // Setters
     void SetEventID(Int_t evtid);
-    void SetPad(SPiRITPad *pad);
+    void SetPad(STPad *pad);
 
     // Getters
     Int_t GetEventID();
     Int_t GetNumPads();
-    SPiRITPad *GetNextPad();
-    SPiRITPad *GetPad(Int_t padNo);
-    SPiRITPad *GetPad(Int_t row, Int_t layer); 
+    STPad *GetNextPad();
+    STPad *GetPad(Int_t padNo);
+    STPad *GetPad(Int_t row, Int_t layer); 
 
   private:
     Int_t eventID;
     Int_t firedPads;
     Int_t currentPadNo;
-    SPiRITPad *pads[12096];
+    STPad *pads[12096];
 
-  ClassDef(SPiRITEvent, 1);
+  ClassDef(STEvent, 1);
 };
 
 #endif

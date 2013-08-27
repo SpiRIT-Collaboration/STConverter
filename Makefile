@@ -4,7 +4,8 @@ CXX = g++
 
 LIBNAME = libSPiRIT
 MAKEPEDESTAL = makepedestal
-SOURCE = SPiRITReadRaw.cc SPiRITMap.cc SPiRITPedestal.cc SPiRITEvent.cc SPiRITPad.cc
+#SOURCE = SPiRITReadRaw.cc SPiRITMap.cc SPiRITPedestal.cc SPiRITEvent.cc SPiRITPad.cc
+SOURCE = $(wildcard ST*.cc)
 DICT = $(LIBNAME)Dict.cc
 LINKDEF = $(LIBNAME)LinkDef.hh
 

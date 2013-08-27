@@ -1,5 +1,5 @@
 // =================================================
-//  SPiRITEvent Class
+//  STEvent Class
 //
 //  Description:
 //    Container for a pad data
@@ -8,11 +8,11 @@
 //  2013. 08. 16
 // ================================================= 
 
-#include "SPiRITPad.hh"
+#include "STPad.hh"
 
-ClassImp(SPiRITPad);
+ClassImp(STPad);
 
-void SPiRITPad::Initialize() {
+void STPad::Initialize() {
  maxADCIdx = 0;
 
  for (Int_t i = 0; i < 512; i++) {
@@ -21,7 +21,7 @@ void SPiRITPad::Initialize() {
  }
 }
 
-void SPiRITPad::Process() {
+void STPad::Process() {
   Int_t diff[511];
   Int_t peakReached = 0;
   Int_t prevPeakIdx = 0;
@@ -63,7 +63,7 @@ void SPiRITPad::Process() {
 */
 }
 
-Int_t SPiRITPad::GetNumPeaks() {
+Int_t STPad::GetNumPeaks() {
   Int_t numPeaks = 0;
   for (Int_t i = 0; i < 512; i++)
     if (isPeak[i])

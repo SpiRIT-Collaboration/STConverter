@@ -1,5 +1,5 @@
 // =================================================
-//  SPiRITEvent Class                          
+//  STEvent Class                          
 //                                                  
 //  Description:                                    
 //    Container for an event data
@@ -10,12 +10,12 @@
 
 #include "Riostream.h"
 
-#include "SPiRITEvent.hh"
-#include "SPiRITPad.hh"
+#include "STEvent.hh"
+#include "STPad.hh"
 
-ClassImp(SPiRITEvent);
+ClassImp(STEvent);
 
-SPiRITEvent::SPiRITEvent()
+STEvent::STEvent()
 {
   firedPads = 0;
   currentPadNo = 0;
@@ -24,52 +24,52 @@ SPiRITEvent::SPiRITEvent()
     pads[iPad] = 0;
 }
 
-SPiRITEvent::~SPiRITEvent()
+STEvent::~STEvent()
 {
   for (Int_t iPad = 0; iPad < firedPads; iPad++)
     delete pads[iPad];
 }
 
-void SPiRITEvent::PrintPads()
+void STEvent::PrintPads()
 {
   for (Int_t iPad = 0; iPad < firedPads; iPad++)
     cout << "Pad: " << setw(5) << iPad << " (" << setw(3) << pads[iPad] -> GetPadRow() << ", " << setw(3) << pads[iPad] -> GetPadLayer() << ")" << endl;
 }
 
-void SPiRITEvent::GotoFirst()
+void STEvent::GotoFirst()
 {
    currentPadNo = 0;
 }
 
 // Setters
-void SPiRITEvent::SetEventID(Int_t evtid)
+void STEvent::SetEventID(Int_t evtid)
 {
   eventID = evtid;
 }
 
-void SPiRITEvent::SetPad(SPiRITPad *pad)
+void STEvent::SetPad(STPad *pad)
 {
   pads[firedPads] = pad;
   firedPads++;
 }
 
 // Getters
-Int_t SPiRITEvent::GetNumPads()
+Int_t STEvent::GetNumPads()
 {
   return firedPads;
 }
 
-SPiRITPad *SPiRITEvent::GetNextPad()
+STPad *STEvent::GetNextPad()
 {
   return (currentPadNo < firedPads ? pads[currentPadNo++] : NULL);
 }
 
-SPiRITPad *SPiRITEvent::GetPad(Int_t padNo)
+STPad *STEvent::GetPad(Int_t padNo)
 {
   return (padNo < firedPads ? pads[padNo] : NULL);
 }
 
-SPiRITPad *SPiRITEvent::GetPad(Int_t row, Int_t layer)
+STPad *STEvent::GetPad(Int_t row, Int_t layer)
 {
   for (Int_t iPad = 0; iPad < firedPads; iPad++) {
     Int_t padRow = pads[iPad] -> GetPadRow();
@@ -82,7 +82,7 @@ SPiRITPad *SPiRITEvent::GetPad(Int_t row, Int_t layer)
   return NULL;
 }
 
-Int_t SPiRITEvent::GetEventID()
+Int_t STEvent::GetEventID()
 {
   return eventID;
 }

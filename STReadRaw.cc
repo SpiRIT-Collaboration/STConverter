@@ -1,9 +1,9 @@
 // =================================================
-//  SPiRITReadRaw Class
+//  STReadRaw Class
 // 
 //  Description:
 //    Read the raw file from CoBo and process it
-//    into SPiRITEvent class.
+//    into STEvent class.
 // 
 //  Genie Jhang ( geniejhang@majimak.com )
 //  2013. 08. 16
@@ -13,38 +13,38 @@
 #include <fstream>
 #include <arpa/inet.h>
 
-#include "SPiRITReadRaw.hh"
+#include "STReadRaw.hh"
 
-#include "SPiRITEvent.hh"
-#include "SPiRITPad.hh"
+#include "STEvent.hh"
+#include "STPad.hh"
 
-#include "SPiRITMap.hh"
-#include "SPiRITPedestal.hh"
+#include "STMap.hh"
+#include "STPedestal.hh"
 
-ClassImp(SPiRITReadRaw);
+ClassImp(STReadRaw);
 
-void SPiRITReadRaw::SetRawfile(Char_t *filename)
+void STReadRaw::SetRawfile(Char_t *filename)
 {
   rawfile.open(filename, std::ios::in|std::ios::binary);
   rawfile.seekg(0);
 }
 
-void SPiRITReadRaw::SetPedestalData(Char_t *filename)
+void STReadRaw::SetPedestalData(Char_t *filename)
 {
   usePedestalData = 1;
 
   pedestal -> SetPedestalData(filename);
 }
 
-void SPiRITReadRaw::Initialize()
+void STReadRaw::Initialize()
 {
   usePedestalData = 0;
 
-  mapper = new SPiRITMap();
-  pedestal = new SPiRITPedestal();
+  mapper = new STMap();
+  pedestal = new STPedestal();
 }
 
-SPiRITEvent *SPiRITReadRaw::GetEvent() {
+STEvent *STReadRaw::GetEvent() {
   if (!(rawfile.is_open())) {
     std::cerr << "Raw data file is not loaded!" << std::endl;
 
@@ -192,13 +192,13 @@ SPiRITEvent *SPiRITReadRaw::GetEvent() {
     rawdata[agetIdx][chanIdx][buckIdx] = sample;
   }
 
-  anEvent = new SPiRITEvent();
+  anEvent = new STEvent();
   anEvent -> SetEventID(eventIdx);
-  SPiRITPad *pad = NULL;
+  STPad *pad = NULL;
   Int_t padIdx = 0;
   for (Int_t agetIdx = 0; agetIdx < 4; agetIdx++) {
     for (Int_t chanIdx = 0; chanIdx < 68; chanIdx++) {
-      pad = new SPiRITPad();
+      pad = new STPad();
 
       Int_t row, layer;
       mapper -> GetRowNLayer((Int_t)coboIdx, (Int_t)asadIdx, agetIdx, chanIdx, row, layer);
