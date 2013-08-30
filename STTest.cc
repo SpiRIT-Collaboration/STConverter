@@ -11,6 +11,7 @@
 #include "STTest.hh"
 #include "STMap.hh"
 
+#include "Riostream.h"
 #include "TStyle.h"
 #include "TCanvas.h"
 #include "TH2D.h"
@@ -32,6 +33,7 @@ STTest::STTest()
   uaCvs = NULL;
   uaHist = NULL;
   uaList = NULL;
+  uaMapList = NULL;
   uaLineList = NULL;
 }
 
@@ -114,6 +116,7 @@ void STTest::ShowUAMap()
     uaHist -> SetLabelColor(0, "y");
     uaHist -> Draw("colz");
 
+    uaMapList = new TList();
     uaList = new TList();
     for (Int_t iUA = 0; iUA < 48; iUA++) {
       Int_t coboIdx = map -> GetCoboIdx(iUA);
@@ -121,15 +124,20 @@ void STTest::ShowUAMap()
 
       Int_t row = iUA/4;
       Int_t layer = iUA%4;
-      TLatex *textUA = NULL;
+      TLatex *textUAMap = NULL;
       if (coboIdx < 10)
-        textUA = new TLatex(layer - 0.20, row - 0.23, Form("C%dA%d", coboIdx, asadIdx));
+        textUAMap = new TLatex(layer + 0.10, row - 0.24, Form("C%dA%d", coboIdx, asadIdx));
       else
-        textUA = new TLatex(layer - 0.23, row - 0.23, Form("C%dA%d", coboIdx, asadIdx));
+        textUAMap = new TLatex(layer + 0.02, row - 0.24, Form("C%dA%d", coboIdx, asadIdx));
 
+      TLatex *textUA = new TLatex(layer - 0.45, row - 0.24, Form("UA%d", iUA));
       textUA -> Draw("same");
       uaList -> Add(textUA);
       textUA = NULL;
+
+      textUAMap -> Draw("same");
+      uaMapList -> Add(textUAMap);
+      textUAMap = NULL;
     }
 
     uaLineList = new TList();
@@ -143,7 +151,6 @@ void STTest::ShowUAMap()
       line -> Draw("same");
       uaLineList -> Add(line);
     }
-    
   } else {
     gStyle -> SetOptStat(0);
     uaCvs = new TCanvas("uaCvs", "", 800, 530);
@@ -154,9 +161,30 @@ void STTest::ShowUAMap()
     while ((text = (TLatex *) nextUA()))
       text -> Draw("same");
 
+    TIter nextUAMap(uaMapList);
+    while ((text = (TLatex *) nextUAMap()))
+      text -> Draw("same");
+
     TIter nextLine(uaLineList);
     TLine *line = NULL;
     while ((line = (TLine *) nextLine()))
       line -> Draw("same");
   }
+}
+
+void STTest::PrintMap(Int_t padRow, Int_t padLayer)
+{
+  Int_t uaIdx, coboIdx, asadIdx, agetIdx, chIdx;
+  map -> GetMapData(padRow, padLayer, uaIdx, coboIdx, asadIdx, agetIdx, chIdx);
+
+  cout << "============" << endl;
+  cout << "   row: " << setw(3) << padRow << endl;
+  cout << " layer: " << setw(3) << padLayer << endl;
+  cout << endl;
+  cout << "    UA: " << setw(3) << uaIdx << endl;
+  cout << "  CoBo: " << setw(3) << coboIdx << endl;
+  cout << "  AsAd: " << setw(3) << asadIdx << endl;
+  cout << "  AGET: " << setw(3) << agetIdx << endl;
+  cout << "    Ch: " << setw(3) << chIdx << endl;
+  cout << "============" << endl;
 }

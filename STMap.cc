@@ -43,15 +43,25 @@ void STMap::GetRowNLayer(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chId
   return;
 }
 
-void STMap::GetMapData(Int_t row, Int_t layer, Int_t &UAIdx, Int_t &coboIdx, Int_t &asadIdx, Int_t &agetIdx, Int_t &chIdx)
+void STMap::GetMapData(Int_t padRow, Int_t padLayer, Int_t &UAIdx, Int_t &coboIdx, Int_t &asadIdx, Int_t &agetIdx, Int_t &chIdx)
 {
-  UAIdx = (row/9)*4 + layer/28;
+  if (padRow < 0 || padRow >= 108 || padLayer < 0 || padLayer >= 112) {
+    UAIdx = -1;
+    coboIdx = -1;
+    asadIdx = -1;
+    agetIdx = -1;
+    chIdx = -1;
+
+    return;
+  }
+
+  UAIdx = (padRow/9)*4 + padLayer/28;
   coboIdx = GetCoboIdx(UAIdx);
   asadIdx = GetAsadIdx(UAIdx);
 
   if (UAIdx < 24) {
-    Int_t agetRow = row%9;
-    Int_t uaLayer = layer%28;
+    Int_t agetRow = padRow%9;
+    Int_t uaLayer = padLayer%28;
 
     agetIdx = uaLayer/7;
     Int_t agetLayer = uaLayer%7;
@@ -62,8 +72,8 @@ void STMap::GetMapData(Int_t row, Int_t layer, Int_t &UAIdx, Int_t &coboIdx, Int
         break;
       }
   } else {
-    Int_t agetRow = (8 - row%9);
-    Int_t uaLayer = (27 - layer%28);
+    Int_t agetRow = (8 - padRow%9);
+    Int_t uaLayer = (27 - padLayer%28);
 
     agetIdx = uaLayer/7;
     Int_t agetLayer = uaLayer%7;

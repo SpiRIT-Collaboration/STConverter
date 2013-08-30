@@ -26,6 +26,7 @@ class STTest : public TObject
 
     void ShowAGETMap();
     void ShowUAMap();
+    void PrintMap(Int_t padRow, Int_t padLayer);
 
   private:
     STMap *map;
@@ -38,6 +39,7 @@ class STTest : public TObject
     TCanvas *uaCvs;
     TH2D *uaHist;
     TList *uaList;
+    TList *uaMapList;
     TList *uaLineList;
 
   ClassDef(STTest, 1);

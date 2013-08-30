@@ -23,7 +23,7 @@ class STMap : public TObject {
 
     // Getter
     void GetRowNLayer(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chIdx, Int_t &padRow, Int_t &padLayer);
-    void GetMapData(Int_t row, Int_t layer, Int_t &UAIdx, Int_t &coboIdx, Int_t &asadIdx, Int_t &agetIdx, Int_t &chIdx);
+    void GetMapData(Int_t padRow, Int_t padLayer, Int_t &UAIdx, Int_t &coboIdx, Int_t &asadIdx, Int_t &agetIdx, Int_t &chIdx);
 
     Int_t GetUAIdx(Int_t coboIdx, Int_t asadIdx);
     Int_t GetCoboIdx(Int_t uaIdx);
