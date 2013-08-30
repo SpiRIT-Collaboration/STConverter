@@ -12,16 +12,17 @@
 
 #include "STMap.hh"
 
+#include <fstream>
+
 ClassImp(STMap);
 
-STMap::STMap() {
-  Int_t definePadRowOfCh[68] = {-2,1,2,2,2,1,3,1,3,0,3,-2,0,4,0,4,2,4,1,3,0,3,-2,0,3,0,3,0,2,1,2,1,2,1,7,6,6,6,7,5,7,5,8,5,8,-2,4,8,5,6,4,7,4,8,4,8,-2,5,8,5,8,5,7,6,7,6,7,6};
-  Int_t definePadLayerOfCh[68] = {-2,0,1,0,2,1,0,2,1,0,2,-2,1,0,2,1,3,2,3,3,3,4,-2,4,5,5,6,6,6,6,4,4,5,5,2,0,2,1,0,0,1,1,0,2,1,-2,3,2,3,3,4,3,5,3,6,4,-2,5,5,4,6,6,5,6,4,4,6,5};
-
-  memcpy(padRowOfCh, definePadRowOfCh, sizeof(definePadRowOfCh));
-  memcpy(padLayerOfCh, definePadLayerOfCh, sizeof(definePadLayerOfCh));
+STMap::STMap()
+{
+  LoadChToPadMap();
+  LoadUAMap();
 }
 
+// Getters
 void STMap::GetRowNLayer(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chIdx, Int_t &padRow, Int_t &padLayer) {
   if (padLayerOfCh[chIdx] == -2) {
     padLayer = -2;
@@ -30,9 +31,103 @@ void STMap::GetRowNLayer(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chId
     return;
   }
 
-  padRow = coboIdx*9 + padRowOfCh[chIdx];
-//  padLayer = asadIdx*28 + agetIdx*7 + padLayerOfCh[chIdx];
-  padLayer = asadIdx*28 + (3 - agetIdx)*7 + padLayerOfCh[chIdx];
+  Int_t UAIdx = GetUAIdx(coboIdx, asadIdx);
+  if (UAIdx < 24) {
+    padRow = (UAIdx/4)*9 + padRowOfCh[chIdx];
+    padLayer = (UAIdx%4)*28 + agetIdx*7 + padLayerOfCh[chIdx];
+  } else {
+    padRow = (UAIdx/4)*9 + (8 - padRowOfCh[chIdx]); 
+    padLayer = (UAIdx%4)*28 + (3 - agetIdx)*7 + (6 - padLayerOfCh[chIdx]);
+  }
 
   return;
+}
+
+void STMap::GetMapData(Int_t row, Int_t layer, Int_t &UAIdx, Int_t &coboIdx, Int_t &asadIdx, Int_t &agetIdx, Int_t &chIdx)
+{
+  UAIdx = (row/9)*4 + layer/28;
+  coboIdx = GetCoboIdx(UAIdx);
+  asadIdx = GetAsadIdx(UAIdx);
+
+  if (UAIdx < 24) {
+    Int_t agetRow = row%9;
+    Int_t uaLayer = layer%28;
+
+    agetIdx = uaLayer/7;
+    Int_t agetLayer = uaLayer%7;
+
+    for (Int_t iCh = 0; iCh < 68; iCh++)
+      if (padRowOfCh[iCh] == agetRow && padLayerOfCh[iCh] == agetLayer) {
+        chIdx = iCh;
+        break;
+      }
+  } else {
+    Int_t agetRow = (8 - row%9);
+    Int_t uaLayer = (27 - layer%28);
+
+    agetIdx = uaLayer/7;
+    Int_t agetLayer = uaLayer%7;
+
+    for (Int_t iCh = 0; iCh < 68; iCh++)
+      if (padRowOfCh[iCh] == agetRow && padLayerOfCh[iCh] == agetLayer) {
+        chIdx = iCh;
+        break;
+      }
+  }
+}
+
+// Private functions
+void STMap::LoadChToPadMap()
+{
+  char dummy[25];
+  std::ifstream chToPadMap("ChToPad.map");
+  chToPadMap.getline(dummy, 200);
+
+  Int_t ch = -1;
+  while (!(chToPadMap.eof())) {
+    chToPadMap >> ch;
+    chToPadMap >> padLayerOfCh[ch] >> padRowOfCh[ch];
+  }
+}
+
+void STMap::LoadUAMap()
+{
+  char dummy[25];
+  std::ifstream uaMap("UnitAsAd.map");
+  uaMap.getline(dummy, 200);
+
+  Int_t idx = -1;
+  while (!(uaMap.eof())) {
+    uaMap >> idx;
+    uaMap >> cobo[idx] >> asad[idx];
+
+    ua[idx] = idx;
+  }
+}
+
+Int_t STMap::GetUAIdx(Int_t coboIdx, Int_t asadIdx)
+{
+  for (Int_t iUA = 0; iUA < 48; iUA++)
+    if (cobo[iUA] == coboIdx && asad[iUA] == asadIdx)
+      return ua[iUA];
+
+  return -1;
+}
+
+Int_t STMap::GetCoboIdx(Int_t uaIdx)
+{
+  for (Int_t iUA = 0; iUA < 48; iUA++)
+    if (ua[iUA] == uaIdx)
+      return cobo[iUA];
+
+  return -1;
+}
+
+Int_t STMap::GetAsadIdx(Int_t uaIdx)
+{
+  for (Int_t iUA = 0; iUA < 48; iUA++)
+    if (ua[iUA] == uaIdx)
+      return asad[iUA];
+
+  return -1;
 }

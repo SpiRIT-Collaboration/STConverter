@@ -35,6 +35,7 @@ class STPlot : public TObject
     void DrawPadplane();
     void DrawADC(Int_t padNo);
     void DrawLayer(Int_t layer);
+
     // Getters
 
   private:

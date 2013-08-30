@@ -12,12 +12,20 @@ LINKDEF = $(LIBNAME)LinkDef.hh
 $(LIBNAME).so: $(SOURCE:.cc=.o) $(DICT:.cc=.o)
 	$(CXX) --shared -fPIC -o $@ $(ROOT_LIBS) $^
 
-$(DICT): $(SOURCE:.cc=.hh)
-	rootcint -f $@ -c $^ $(LINKDEF)
+$(DICT): $(SOURCE:.cc=.hh) $(LINKDEF)
+	rootcint -f $@ -c $^
 	$(CXX) -c -fPIC $@ $(ROOT_CFLAGS)
 
 $(MAKEPEDESTAL): $(MAKEPEDESTAL).cc
 	$(CXX) -o $@ $^ $(ROOT_CFLAGS) $(ROOT_LIBS)
+
+$(LINKDEF):
+	@echo "" > LinkdefSpace
+	@echo "#ifdef __CINT__" > LinkdefHeader
+	@$(shell ls | grep ^ST | grep cc | awk -F. {'printf("#pragma link C++ class %s+;\n", $$1)'} > LinkdefBody)
+	@echo "#endif" > LinkdefFooter
+	@cat LinkdefHeader LinkdefSpace LinkdefBody LinkdefSpace LinkdefFooter > $@
+	@rm -rf LinkdefSpace LinkdefHeader LinkdefBody LinkdefFooter
 
 clean:
 	@rm -rf $(LIBNAME)Dict.cc
@@ -26,6 +34,7 @@ clean:
 	@rm -rf $(CONVERTER)
 	@rm -rf $(MAKEHITS)
 	@rm -rf $(DICT:.cc=.*)
+	@rm -rf $(LINKDEF)
 
 %.o: %.cc
 	$(CXX) -c -fPIC $(ROOT_CFLAGS) $<

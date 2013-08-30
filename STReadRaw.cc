@@ -39,6 +39,7 @@ void STReadRaw::SetPedestalData(Char_t *filename)
 void STReadRaw::Initialize()
 {
   usePedestalData = 0;
+  prevEvent = 0;
 
   mapper = new STMap();
   pedestal = new STPedestal();

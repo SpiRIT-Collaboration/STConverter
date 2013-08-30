@@ -43,6 +43,7 @@ class STReadRaw : public TObject {
     STPedestal *pedestal;
 
     Bool_t usePedestalData;
+    UInt_t prevEvent;
 
   ClassDef(STReadRaw, 1);
 };
