@@ -29,12 +29,12 @@ class STPlot : public TObject
 
     void SetAutodelete(Bool_t value);
     
-    // Setters
-    void SetEvent(STEvent *anEvent);
-
     void DrawPadplane();
     void DrawADC(Int_t padNo);
     void DrawLayer(Int_t layer);
+
+    // Setters
+    void SetEvent(STEvent *anEvent);
 
     // Getters
 

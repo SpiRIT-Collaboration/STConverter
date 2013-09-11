@@ -30,7 +30,7 @@ clean:
 	@rm -rf $(LIBNAME)Dict.cc
 	@rm -rf *.o
 	@rm -rf $(LIBNAME).so
-	@rm -rf $(CONVERTER)
+	@rm -rf $(MAKEPEDESTAL)
 	@rm -rf $(MAKEHITS)
 	@rm -rf $(DICT:.cc=.*)
 	@rm -rf $(LINKDEF)

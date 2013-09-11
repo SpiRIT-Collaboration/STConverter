@@ -3,8 +3,8 @@
 // 
 //  Description:
 //    This class is used for calculating or finding
-//    pedestal value corresponding to user-input
-//    agetIdx & chIdx.
+//    pedestal value and sigma corresponding to
+//    user-input coboIdx, asadIdx, agetIdx & chIdx.
 // 
 //  Genie Jhang ( geniejhang@majimak.com )
 //  2013. 08. 14
@@ -30,11 +30,14 @@ class STPedestal : public TObject {
     void Initialize();
     void SetPedestalData(Char_t *pedestalData);
 
-    // Calculate pedestal value(0) and sigma(1) array from first 20 buckets
-    void GetPedestal(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chIdx, Double_t *pedestal);
+    Bool_t GetUsePedestalData();
+    void SetUsePedestalData(Bool_t value);
 
     // Look up pedestal value(0) and sigma(1) array from pedestal run data
-    void GetPedestal(Int_t *samples, Double_t *pedestal);
+    void GetPedestal(Int_t *samples, Double_t *pedestal, Int_t startBuckIdx = 20, Int_t numSamples = 20);
+
+    // Calculate pedestal value(0) and sigma(1) array from first 20 buckets
+    void GetPedestal(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chIdx, Double_t *pedestal);
 
   private:
     TFile *openFile;
@@ -42,6 +45,8 @@ class STPedestal : public TObject {
 
     Double_t pedestal;
     Double_t pedestalSigma;
+
+    Bool_t usePedestalData;
 
   ClassDef(STPedestal, 1);
 };

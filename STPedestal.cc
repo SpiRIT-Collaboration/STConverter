@@ -4,7 +4,7 @@
 //  Description:
 //    This class is used for calculating or finding
 //    pedestal value and sigma corresponding to
-//    user-input agetIdx & chIdx.
+//    user-input coboIdx, asadIdx, agetIdx & chIdx.
 // 
 //  Genie Jhang ( geniejhang@majimak.com )
 //  2013. 08. 14
@@ -30,6 +30,8 @@ STPedestal::STPedestal(Char_t *pedestalData) {
 }
 
 void STPedestal::Initialize() {
+  usePedestalData = 0;
+
   openFile = NULL;
   pedestalTree = NULL;
 
@@ -41,24 +43,34 @@ void STPedestal::SetPedestalData(Char_t *pedestalData) {
   if (openFile != NULL)
     delete openFile;
 
-  openFile = new TFile(pedestalData);
-
-  pedestalTree = (TTree *) openFile -> Get("pedestal");
+  if ((openFile = new TFile(pedestalData))) {
+    pedestalTree = (TTree *) openFile -> Get("pedestal");
     pedestalTree -> SetBranchAddress("pedestal", &pedestal);
     pedestalTree -> SetBranchAddress("pedestalSigma", &pedestalSigma);
+
+    SetUsePedestalData(1);
+  }
 }
 
-void STPedestal::GetPedestal(Int_t *samples, Double_t *pedestalArray) {
+Bool_t STPedestal::GetUsePedestalData()
+{
+  return usePedestalData;
+}
+
+void STPedestal::SetUsePedestalData(Bool_t value)
+{
+  usePedestalData = value;
+}
+
+void STPedestal::GetPedestal(Int_t *samples, Double_t *pedestalArray, Int_t startIdx, Int_t numPedestalSamples) {
   Initialize();
   
-  Int_t numPedestalSamples = 20;
-
-  for (Int_t i = 0; i < numPedestalSamples; i++)
+  for (Int_t i = startIdx; i < startIdx + numPedestalSamples; i++)
     pedestal += samples[i];
 
   pedestal /= (Double_t) numPedestalSamples;
 
-  for (Int_t i = 0; i < numPedestalSamples; i++)
+  for (Int_t i = startIdx; i < startIdx + numPedestalSamples; i++)
     pedestalSigma += TMath::Power(pedestal - (Double_t) samples[i], 2);
 
   pedestalArray[0] = pedestal;

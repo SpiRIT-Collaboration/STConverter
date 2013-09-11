@@ -16,18 +16,21 @@
 
 #include "TROOT.h"
 #include "TObject.h"
+#include "TString.h"
 
+class STGraw;
 class STEvent;
 class STMap;
 class STPedestal;
 
 class STReadRaw : public TObject {
   public:
-    STReadRaw() { Initialize(); }
-    STReadRaw(Char_t *filename) { SetRawfile(filename); Initialize(); }
+    STReadRaw();
+    STReadRaw(Char_t *filename);
     ~STReadRaw() {}
 
     void Initialize();
+    Bool_t NextFile();
 
     // Setters
     void SetRawfile(Char_t *filename);
@@ -35,15 +38,22 @@ class STReadRaw : public TObject {
 
     // Getters
     STEvent *GetEvent();
+    STGraw *GetGraw();
 
   private:
-    std::ifstream rawfile;
-    STEvent *anEvent;
-    STMap *mapper;
-    STPedestal *pedestal;
+    TString datafile;
 
+    std::ifstream rawfile;
+
+    STGraw *aGraw;
+
+    STEvent *anEvent;
+    STMap *mapperPtr;
+    STPedestal *pedestalPtr;
+
+    Bool_t firstFlag;
     Bool_t usePedestalData;
-    UInt_t prevEvent;
+    UInt_t prevEventIdx;
 
   ClassDef(STReadRaw, 1);
 };

@@ -2,7 +2,6 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TMath.h"
-#include "TClonesArray.h"
 
 #include <fstream>
 #include <iostream>
@@ -20,8 +19,7 @@ void MakePedestal(Char_t *pedestalFile) {
   unsigned short headerSize;
   unsigned short itemSize;
   unsigned int nItems;
-  unsigned short eventTimeH;
-  unsigned int eventTimeT;
+  unsigned short eventTime[3];
   unsigned int eventIdx;
   unsigned short coboIdx;
   unsigned short asadIdx;
@@ -45,13 +43,14 @@ void MakePedestal(Char_t *pedestalFile) {
   Int_t treeAsadIdx;
   Int_t treeAgetIdx;
   Int_t treeChIdx;
-  Int_t numSamples[4][68] = {0};
+
+  UInt_t numSamples[48*4*4*68] = {0};
   Double_t treePedestal = 0;
   Double_t treePedestalSigma = 0;
-  Double_t prevPedestal[4][68] = {0};
-  Double_t prevPedestalSigma[4][68] = {0};
-  Double_t pedestal[4][68] = {0};
-  Double_t pedestalSigma[4][68] = {0};
+  Double_t prevPedestal[48*4*4*68] = {0};
+  Double_t prevPedestalSigma[48*4*4*68] = {0};
+  Double_t pedestal[48*4*4*68] = {0};
+  Double_t pedestalSigma[48*4*4*68] = {0};
 
   TString output = pedestalFile;
   output.ReplaceAll(".graw", "_pedestal.root");
@@ -76,8 +75,7 @@ void MakePedestal(Char_t *pedestalFile) {
     openFile.read(reinterpret_cast<char *>(&headerSize), 2);
     openFile.read(reinterpret_cast<char *>(&itemSize), 2);
     openFile.read(reinterpret_cast<char *>(&nItems), 4);
-    openFile.read(reinterpret_cast<char *>(&eventTimeH), 2);
-    openFile.read(reinterpret_cast<char *>(&eventTimeT), 4);
+    openFile.read(reinterpret_cast<char *>(&eventTime), 6);
     openFile.read(reinterpret_cast<char *>(&eventIdx), 4);
     openFile.read(reinterpret_cast<char *>(&coboIdx), 1);
     openFile.read(reinterpret_cast<char *>(&asadIdx), 1);
@@ -108,14 +106,15 @@ void MakePedestal(Char_t *pedestalFile) {
     cout << "headerSize: " << htons(headerSize) << endl;
     cout << "itemSize: " << htons(itemSize) << endl;
     cout << "nItems: " << htonl(nItems) << endl;
-    cout << "eventTime: " << (htons(eventTimeH) << 24) + htonl(eventTimeT) << endl;
+    cout << "eventTime: " << (htons(eventTime[2]) << 32) + (htons(eventTime[1]) << 16) + htons(eventTime[0]) << endl;
     */
     cout << "eventIdx: " << htonl(eventIdx) << endl;
 //    cout << "coboIdx: " << (htons(coboIdx) >> 8) << endl;
 //    cout << "asadIdx: " << (htons(asadIdx) >> 8) << endl;
 
-    treeCoboIdx = (htons(coboIdx) >> 8);
-    treeAsadIdx = (htons(asadIdx) >> 8);
+    coboIdx = (htons(coboIdx) >> 8);
+    asadIdx = (htons(asadIdx) >> 8);
+
 /*
     cout << "readOffset: " << htons(readOffset) << endl;
     cout << "status: " << (htons(status) >> 8) << endl;
@@ -150,7 +149,7 @@ void MakePedestal(Char_t *pedestalFile) {
     cout << "lastCell_3: " << htons(lastCell3) << endl;
     */
 
-    Int_t rawdata[4][68][512] = {0};
+    Int_t rawdata[4*68*512] = {0};
 
     unsigned int data;
     openFile.ignore(41);
@@ -172,38 +171,49 @@ void MakePedestal(Char_t *pedestalFile) {
       Int_t buckIdx = ((data & 0x007fc000) >> 14);
       Int_t sample = (data & 0x00000fff);
 
-      rawdata[agetIdx][chanIdx][buckIdx] = sample;
+      Int_t index = agetIdx*68*512 + chanIdx*512 + buckIdx;
+      rawdata[index] = sample;
     }
 
     for (Int_t agetIdx = 0; agetIdx < 4; agetIdx++) {
       for (Int_t chanIdx = 0; chanIdx < 68; chanIdx++) {
         Int_t takenSamples = 511;
 
+        Int_t index = agetIdx*68*512 + chanIdx*512;
+        Int_t indexPed = coboIdx*4*4*68 + asadIdx*4*68 + agetIdx*68 + chanIdx;
         for (Int_t i = 0; i < takenSamples; i++) {
-          prevPedestal[agetIdx][chanIdx] = pedestal[agetIdx][chanIdx];
-          pedestal[agetIdx][chanIdx] = prevPedestal[agetIdx][chanIdx] + (rawdata[agetIdx][chanIdx][i] - prevPedestal[agetIdx][chanIdx])/(Double_t)(numSamples[agetIdx][chanIdx] + 1);
+          prevPedestal[indexPed] = pedestal[indexPed];
+          pedestal[indexPed] = prevPedestal[indexPed] + (rawdata[index + i] - prevPedestal[indexPed])/(Double_t)(numSamples[indexPed] + 1);
 
-          if (numSamples[agetIdx][chanIdx] > 1) {
-            prevPedestalSigma[agetIdx][chanIdx] = pedestalSigma[agetIdx][chanIdx];
-            pedestalSigma[agetIdx][chanIdx] = numSamples[agetIdx][chanIdx]*prevPedestalSigma[agetIdx][chanIdx]/(Double_t)(numSamples[agetIdx][chanIdx] + 1) + TMath::Power(rawdata[agetIdx][chanIdx][i] - pedestal[agetIdx][chanIdx], 2)/(Double_t)(numSamples[agetIdx][chanIdx]);
+          if (numSamples[indexPed] > 1) {
+            prevPedestalSigma[indexPed] = pedestalSigma[indexPed];
+            pedestalSigma[indexPed] = numSamples[indexPed]*prevPedestalSigma[indexPed]/(Double_t)(numSamples[indexPed] + 1) + TMath::Power(rawdata[index + i] - pedestal[indexPed], 2)/(Double_t)(numSamples[indexPed]);
           }
 
-          numSamples[agetIdx][chanIdx]++;
+          numSamples[indexPed]++;
         }
       }
     }
   }
 
-  for (Int_t agetIdx = 0; agetIdx < 4; agetIdx++) {
-    for (Int_t chanIdx = 0; chanIdx < 68; chanIdx++) {
-      pedestalSigma[agetIdx][chanIdx] = TMath::Sqrt(pedestalSigma[agetIdx][chanIdx]);
+  cout << "Writing in file!" << endl;
+  for (Int_t coboIdx = 0; coboIdx < 48; coboIdx++) {
+    for (Int_t asadIdx = 0; asadIdx < 4 ; asadIdx++) {
+      for (Int_t agetIdx = 0; agetIdx < 4; agetIdx++) {
+        for (Int_t chanIdx = 0; chanIdx < 68; chanIdx++) {
+          Int_t index = coboIdx*4*4*68 + asadIdx*4*68 + agetIdx*68 + chanIdx;
+          pedestalSigma[index] = TMath::Sqrt(pedestalSigma[index]);
 
-      treeAgetIdx = agetIdx;
-      treeChIdx = chanIdx;
-      treePedestal = pedestal[agetIdx][chanIdx];
-      treePedestalSigma = pedestalSigma[agetIdx][chanIdx];
+          treeCoboIdx = coboIdx;
+          treeAsadIdx = asadIdx;
+          treeAgetIdx = agetIdx;
+          treeChIdx = chanIdx;
+          treePedestal = pedestal[index];
+          treePedestalSigma = pedestalSigma[index];
 
-      writeTree -> Fill();
+          writeTree -> Fill();
+        }
+      }
     }
   }
 
