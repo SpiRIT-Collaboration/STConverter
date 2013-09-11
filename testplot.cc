@@ -34,8 +34,9 @@ void testplot() {
     hist[2] -> GetYaxis() -> CenterTitle();
 
 //  STReadRaw *readraw = new STReadRaw("data/CoBo_2013-07-27T11_33_14.112_0000.graw");
-  STReadRaw *readraw = new STReadRaw("data/CoBo_2013-07-25T22_36_38.647_0000.graw");
-    readraw -> SetPedestalData("data/CoBo_2013-07-25T05_44_12.511_0000_pedestal.root");
+//  STReadRaw *readraw = new STReadRaw("data/CoBo_2013-07-25T22_36_38.647_0000.graw");
+  STReadRaw *readraw = new STReadRaw("test_20130911/ramp_1pC/CoBo_AsAd3_2013-09-11T11-31-19.157_0000.graw");
+//    readraw -> SetPedestalData("data/CoBo_2013-07-25T05_44_12.511_0000_pedestal.root");
   STEvent *event = NULL;
   while (event = readraw -> GetEvent()) {
     Int_t numPads = event -> GetNumPads();
@@ -50,7 +51,7 @@ void testplot() {
       hist[2] -> Fill(maxADC);
     }
 
-    delete event;
+//    delete event;
   }
 
   for (Int_t i = 0; i < 3; i++) {

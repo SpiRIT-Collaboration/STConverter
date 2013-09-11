@@ -504,7 +504,7 @@ STGraw *STReadRaw::GetGraw() {
       Int_t buckIdx = ((data & 0x007fc000) >> 14);
       Int_t sample = (data & 0x00000fff);
 
-      if (chanIdx > 68) continue;
+      if (chanIdx >= 68 || agetIdx >= 4 || buckIdx >= 512) continue;
 
       aGraw -> SetRawADC(agetIdx, chanIdx, buckIdx, sample);
     }

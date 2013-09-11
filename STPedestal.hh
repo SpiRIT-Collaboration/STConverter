@@ -34,7 +34,7 @@ class STPedestal : public TObject {
     void SetUsePedestalData(Bool_t value);
 
     // Look up pedestal value(0) and sigma(1) array from pedestal run data
-    void GetPedestal(Int_t *samples, Double_t *pedestal, Int_t startBuckIdx = 20, Int_t numSamples = 20);
+    void GetPedestal(Int_t *samples, Double_t *pedestal, Int_t startBuckIdx = 10, Int_t numSamples = 20);
 
     // Calculate pedestal value(0) and sigma(1) array from first 20 buckets
     void GetPedestal(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chIdx, Double_t *pedestal);
