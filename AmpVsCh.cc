@@ -1,4 +1,39 @@
-{
+TCanvas *cvs;
+TH2D *hAsad[4];
+
+void PrepareCanvas() {
+  gStyle -> SetOptStat(0);
+  gStyle -> SetPadLeftMargin(0.04);
+  gStyle -> SetPadRightMargin(0.04);
+  gStyle -> SetTitleSize(0.08, "x");
+  gStyle -> SetTitleSize(0.08, "y");
+  gStyle -> SetTitleOffset(0.5, "x");
+  gStyle -> SetTitleOffset(0.2, "y");
+
+  cvs = new TCanvas("cvs", "", 1800, 1200);
+  cvs -> SetLogz();
+  cvs -> Divide(1, 4);
+
+  hAsad[0] = new TH2D("hAsad0", "AsAd 0", 272, -0.5, 271.5, 8192, -0.5, 4095.5);
+  hAsad[0] -> GetXaxis() -> SetTitle("Channel");
+  hAsad[0] -> GetXaxis() -> CenterTitle();
+  hAsad[0] -> GetYaxis() -> SetTitle("Amplitude");
+  hAsad[0] -> GetYaxis() -> CenterTitle();
+
+  hAsad[1] = (TH2D *) hAsad[0] -> Clone("hAsad1");
+  hAsad[1] -> SetTitle("AsAd 1");
+  hAsad[2] = (TH2D *) hAsad[0] -> Clone("hAsad2");
+  hAsad[2] -> SetTitle("AsAd 2");
+  hAsad[3] = (TH2D *) hAsad[0] -> Clone("hAsad3");
+  hAsad[3] -> SetTitle("AsAd 3");
+
+  for (Int_t i = 0; i < 4; i++) {
+    cvs -> cd(i + 1);
+    hAsad[i] -> Draw("colz");
+  }
+}
+
+void AmpVsCh() {
   gSystem -> Load("libSPiRIT");
   STReadRaw *a[4] = {0};
   
