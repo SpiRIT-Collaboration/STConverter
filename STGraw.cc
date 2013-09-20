@@ -140,14 +140,15 @@ void STGraw::Process(STPedestal *pedestalPtr)
       else
         pedestalPtr -> GetPedestal(rawADC + gChIdx*512, pedestal, 10, 20);
 
-      for (Int_t buckIdx = 0; buckIdx < 512; buckIdx++) {
+      for (Int_t buckIdx = 5; buckIdx < 507; buckIdx++) {
         Int_t gBuckIdx = agetIdx*68*512 + chIdx*512 + buckIdx;
 
         adc[gBuckIdx] = pedestal[0] - rawADC[gBuckIdx];
 
-        if (adc[gBuckIdx] > adc[maxADCIdx[gChIdx]] && adc[gBuckIdx] != pedestal[0])
+        if (adc[gBuckIdx] > adc[gChIdx*512 + maxADCIdx[gChIdx]] && rawADC[gBuckIdx] < pedestal[0] - 5*pedestal[1] && rawADC[gBuckIdx] != 0)
           maxADCIdx[gChIdx] = buckIdx;
       }
+
 /*
       Int_t gChIdx = agetIdx*68 + chIdx;
 
