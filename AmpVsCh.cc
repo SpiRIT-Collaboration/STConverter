@@ -10,12 +10,12 @@ void PrepareCanvas(Int_t numAsads = 4) {
   gStyle -> SetLabelSize(0.05, "x");
   gStyle -> SetLabelSize(0.05, "y");
   gStyle -> SetTitleOffset(0.5, "x");
-  gStyle -> SetTitleOffset(0.26, "y");
+  gStyle -> SetTitleOffset(0.4, "y");
   gStyle -> SetTickLength(0.01, "y");
   gStyle -> SetPalette(55);
   gStyle -> SetNumberContours(100);
 
-  cvs = new TCanvas("cvs", "", 1800, numAsads*400);
+  cvs = new TCanvas("cvs", "", 2200, numAsads*400);
   cvs -> Divide(1, numAsads);
 
   hAsad[0] = new TH2D("hAsad0", "AsAd 0", 272, -0.5, 271.5, 8192, -0.5, 4095.5);
@@ -60,12 +60,14 @@ void AmpVsCh() {
   gSystem -> Load("libSPiRIT");
   STReadRaw *a[4] = {0};
 
+  /*
   TString date = "20130911";
   TString data = "ramp_1pC_512samples_10to0w11steps_50MHz";
   TString file0 = "CoBo_AsAd0_2013-09-11T11-31-19.116_0000.graw";
   TString file1 = "CoBo_AsAd1_2013-09-11T11-31-19.126_0000.graw";
   TString file2 = "CoBo_AsAd2_2013-09-11T11-31-19.136_0000.graw";
   TString file3 = "CoBo_AsAd3_2013-09-11T11-31-19.157_0000.graw";
+  */
 
   /*
   TString date = "20130912";
@@ -76,14 +78,12 @@ void AmpVsCh() {
   TString file3 = "CoBo_AsAd3_2013-09-12T11-18-45.633_0000.graw";
   */
 
-  /*
   TString date = "20130912";
   TString data = "ramp_240fC_256samples_8to0w9steps_100MHz";
   TString file0 = "CoBo_AsAd0_2013-09-12T12-07-49.657_0000.graw";
   TString file1 = "CoBo_AsAd1_2013-09-12T12-07-49.663_0000.graw";
   TString file2 = "CoBo_AsAd2_2013-09-12T12-07-49.668_0000.graw";
   TString file3 = "CoBo_AsAd3_2013-09-12T12-07-49.679_0000.graw";
-  */
 
   /*
   TString date = "20130912";
@@ -94,10 +94,10 @@ void AmpVsCh() {
   TString file3 = "CoBo_AsAd3_2013-09-12T11-26-32.788_0000.graw";
   */
 
-  a[0] = new STReadRaw(Form("data/test_%s/%s/%s", date.Data(), data.Data(), file0.Data()));
-  a[1] = new STReadRaw(Form("data/test_%s/%s/%s", date.Data(), data.Data(), file1.Data()));
-  a[2] = new STReadRaw(Form("data/test_%s/%s/%s", date.Data(), data.Data(), file2.Data()));
-  a[3] = new STReadRaw(Form("data/test_%s/%s/%s", date.Data(), data.Data(), file3.Data()));
+  a[0] = new STReadRaw(Form("/Volumes/SPiRIT_data/test_%s/%s/%s", date.Data(), data.Data(), file0.Data()));
+  a[1] = new STReadRaw(Form("/Volumes/SPiRIT_data/test_%s/%s/%s", date.Data(), data.Data(), file1.Data()));
+  a[2] = new STReadRaw(Form("/Volumes/SPiRIT_data/test_%s/%s/%s", date.Data(), data.Data(), file2.Data()));
+  a[3] = new STReadRaw(Form("/Volumes/SPiRIT_data/test_%s/%s/%s", date.Data(), data.Data(), file3.Data()));
   
   STGraw *ea[4] = {0};
 
@@ -114,7 +114,7 @@ void AmpVsCh() {
 
     cvs -> cd(j + 1);
     hAsad[j] -> Draw("colz");
-    hAsad[j] -> GetYaxis() -> SetRangeUser(0, 900);
+    hAsad[j] -> GetYaxis() -> SetRangeUser(0, 4096);
   }
 
   
