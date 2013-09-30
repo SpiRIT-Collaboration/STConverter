@@ -12,11 +12,36 @@
 
 ClassImp(STPad);
 
-void STPad::Initialize() {
+STPad::STPad()
+{
+  Initialize();
+}
+
+STPad::STPad(Int_t row, Int_t layer)
+{
+  Initialize();
+
+  fRow = row;
+  fLayer = layer;
+}
+
+STPad::~STPad()
+{
+}
+
+void STPad::Initialize()
+{
  fMaxADCIdx = 0;
 
  for (Int_t i = 0; i < 512; i++)
    fADC[i] = 0;
+
+ fRow = -1;
+ fLayer = -1;
+}
+
+void STPad::Process()
+{
 }
 
 // setters
@@ -38,16 +63,16 @@ void STPad::SetADC(Double_t *val)
 
 void STPad::SetADC(Int_t idx, Double_t val)
 {
-  ADC[idx] = val;
-};
+  fADC[idx] = val;
+}
 
 // getters
-Int_t STPad::GetPadLayer()
+Int_t STPad::GetLayer()
 {
   return fLayer;
 }
 
-Int_t STPad::GetPadRow()
+Int_t STPad::GetRow()
 {
   return fRow;
 }

@@ -43,7 +43,7 @@ class GETDecoder : public TObject
     GETFrame *GetFrame(Int_t frameNo);
 
   private:
-    Bool_t fIsDebugMode;
+    Bool_t fDebugMode;
     void PrintFrameInfo(Int_t frameNo, Int_t eventID, Int_t coboID, Int_t asadID);
 
     void CountFrames();

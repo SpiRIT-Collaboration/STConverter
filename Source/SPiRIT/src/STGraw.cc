@@ -139,10 +139,12 @@ void STGraw::Process(STPedestal *pedestalPtr)
       Int_t gChIdx = agetIdx*68 + chIdx;
       Double_t pedestal[2] = {0};
 
+/*
       if (pedestalPtr -> GetUsePedestalData())
         pedestalPtr -> GetPedestal(coboIdx, asadIdx, agetIdx, chIdx, pedestal);
       else
         pedestalPtr -> GetPedestal(rawADC + gChIdx*512, pedestal, 10, 20);
+        */
 
       for (Int_t buckIdx = 5; buckIdx < 507; buckIdx++) {
         Int_t gBuckIdx = agetIdx*68*512 + chIdx*512 + buckIdx;

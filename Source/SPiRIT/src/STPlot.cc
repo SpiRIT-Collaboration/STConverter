@@ -9,7 +9,7 @@
 // =================================================
 
 #include "STPlot.hh"
-#include "STEvent.hh"
+#include "STRawEvent.hh"
 #include "STPad.hh"
 
 #include "TCanvas.h"
@@ -54,7 +54,7 @@ Bool_t STPlot::CheckEvent()
 }
 
 // Setters
-void STPlot::SetEvent(STEvent *anEvent)
+void STPlot::SetEvent(STRawEvent *anEvent)
 {
   Clear();
 
@@ -75,11 +75,11 @@ void STPlot::DrawPadplane()
   Double_t max = 0;
 
   for (Int_t iPad = 0; iPad < numPads; iPad++) {
-    STPad *aPad = event -> GetNextPad();
+    STPad *aPad = event -> GetPad(iPad);
 
     Double_t *adc = aPad -> GetADC();
 
-    padplaneHist -> SetBinContent(aPad -> GetPadLayer() + 1, aPad -> GetPadRow() + 1, aPad -> GetADC(aPad -> GetMaxADCIdx()));
+    padplaneHist -> SetBinContent(aPad -> GetLayer() + 1, aPad -> GetRow() + 1, aPad -> GetADC(aPad -> GetMaxADCIdx()));
     if(aPad -> GetADC(aPad -> GetMaxADCIdx()) > max) max = aPad -> GetADC(aPad -> GetMaxADCIdx());
   }
 

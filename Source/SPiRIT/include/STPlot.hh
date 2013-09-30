@@ -13,7 +13,7 @@
 
 #include "TROOT.h"
 
-class STEvent;
+class STRawEvent;
 class STPad;
 
 class TCanvas;
@@ -34,7 +34,7 @@ class STPlot : public TObject
     void DrawLayer(Int_t layer);
 
     // Setters
-    void SetEvent(STEvent *anEvent);
+    void SetEvent(STRawEvent *anEvent);
 
     // Getters
 
@@ -44,7 +44,7 @@ class STPlot : public TObject
     Bool_t CheckEvent();
 
     Bool_t isAutodelete;
-    STEvent *event;
+    STRawEvent *event;
     TCanvas *padplaneCvs;
     TH2D *padplaneHist;
     TH1D *padHist;

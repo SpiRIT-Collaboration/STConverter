@@ -9,6 +9,7 @@
 // =================================================
 
 #include <iostream>
+#include <iomanip>
 
 #include "STRawEvent.hh"
 #include "STPad.hh"
@@ -33,9 +34,9 @@ STRawEvent::~STRawEvent()
 void STRawEvent::PrintPads()
 {
   for (Int_t iPad = 0; iPad < fNumPads; iPad++) {
-    std::cout << "Pad: " << setw(5) << iPad;
-    std::cout << " (" << setw(3) << fPadsArray[iPad] -> GetRow();
-    std::cout << ", " << setw(3) << fPadsArray[iPad] -> GetLayer() << ")";
+    std::cout << "Pad: " << std::setw(5) << iPad;
+    std::cout << " (" << std::setw(3) << fPadsArray[iPad] -> GetRow();
+    std::cout << ", " << std::setw(3) << fPadsArray[iPad] -> GetLayer() << ")";
     std::cout << std::endl;
   }
 }

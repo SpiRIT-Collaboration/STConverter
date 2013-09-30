@@ -39,7 +39,7 @@ class STCore : public TObject {
 
     STRawEvent *fRawEvent;
     STMap *fMapPtr;
-    STPedestal *fPedestalPtr
+    STPedestal *fPedestalPtr;
 
     GETDecoder *fDecoder;
     GETFrame *fFrame;

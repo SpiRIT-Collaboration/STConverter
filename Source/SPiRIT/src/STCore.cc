@@ -17,8 +17,8 @@
 #include "STPedestal.hh"
 #include "STRawEvent.hh"
 
-#include "GETDecoder/GETDecoder.hh"
-#include "GETDecoder/GETFrame.hh"
+#include "GETDecoder.hh"
+#include "GETFrame.hh"
 
 ClassImp(STCore);
 
@@ -30,7 +30,7 @@ STCore::STCore()
 STCore::STCore(Char_t *filename)
 {
   Initialize();
-  SetGrawFile(filename);
+  SetGraw(filename);
 }
 
 STCore::~STCore()
@@ -48,7 +48,7 @@ void STCore::Initialize()
   fFrame = new GETFrame();
 
   fIsGraw = 0;
-  fIsPedestal = 0;
+  fIsPedestalData = 0;
 }
 
 void STCore::SetGraw(Char_t *filename)

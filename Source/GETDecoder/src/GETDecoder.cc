@@ -145,7 +145,7 @@ void GETDecoder::CountFrames()
     fGraw.ignore(1);
 
     if (fGraw.eof()) {
-      Bool_t isNextFile = NextFile();
+      Bool_t isNextFile = IsNextFile();
 
       if (isNextFile)
         continue;
@@ -226,7 +226,7 @@ GETFrame *GETDecoder::GetFrame(Int_t frameNo)
     if (fGraw.eof()) {
       std::cout << "== End of the file!" << std::endl;
 
-      Bool_t isNextFile = NextFile();
+      Bool_t isNextFile = IsNextFile();
 
       if (isNextFile)
         continue;

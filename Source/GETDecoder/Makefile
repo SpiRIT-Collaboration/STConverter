@@ -2,36 +2,38 @@ ROOT_CFLAGS = $(shell root-config --cflags)
 ROOT_LIBS = $(shell root-config --libs)
 CXX = g++
 
+PREFIX = GET
+SRCDIR = src
+INCDIR = include
 LIBNAME = libGETDecoder
-SOURCE = $(wildcard GET*.cc)
+SOURCE = $(wildcard $(SRCDIR)/$(PREFIX)*.cc)
+HEADER = $(wildcard $(INCDIR)/$(PREFIX)*.hh)
 DICT = $(LIBNAME)Dict.cc
 LINKDEF = $(LIBNAME)LinkDef.hh
-LIBDEST = ..
+FLAGS = -I./$(INCDIR) $(ROOT_CFLAGS)
+LIBDEST = ../..
 
 $(LIBNAME).so: $(SOURCE:.cc=.o) $(DICT:.cc=.o)
 	$(CXX) --shared -fPIC -o $@ $(ROOT_LIBS) $^
 	@ln -sf $(shell pwd)/$(LIBNAME).so $(LIBDEST)
 
-$(DICT): $(SOURCE:.cc=.hh) $(LINKDEF)
+$(DICT): $(HEADER) $(LINKDEF)
 	rootcint -f $@ -c $^
-	$(CXX) -c -fPIC $@ $(ROOT_CFLAGS)
+	$(CXX) -c -fPIC $@ $(FLAGS)
 
 $(LINKDEF):
 	@echo "" > LinkdefSpace
 	@echo "#ifdef __CINT__" > LinkdefHeader
-	@$(shell ls | grep ^GET | grep cc | awk -F. {'printf("#pragma link C++ class %s+;\n", $$1)'} > LinkdefBody)
+	@$(shell ls $(INCDIR) | grep ^$(PREFIX) | grep hh | awk -F. {'printf("#pragma link C++ class %s+;\n", $$1)'} > LinkdefBody)
 	@echo "#endif" > LinkdefFooter
 	@cat LinkdefHeader LinkdefSpace LinkdefBody LinkdefSpace LinkdefFooter > $@
 	@rm -rf LinkdefSpace LinkdefHeader LinkdefBody LinkdefFooter
 
 clean:
-	@rm -rf $(LIBNAME)Dict.cc
-	@rm -rf *.o
-	@rm -rf $(LIBNAME).so
-	@rm -rf $(MAKEHITS)
 	@rm -rf $(DICT:.cc=.*)
+	@rm -rf *.o $(SRCDIR)/*.o
 	@rm -rf $(LINKDEF)
-	@rm -rf $(LIBDEST)/$(LIBNAME).so
+	@rm -rf $(LIBNAME).so $(LIBDEST)/$(LIBNAME).so
 
 %.o: %.cc
-	$(CXX) -c -fPIC $(ROOT_CFLAGS) $<
+	$(CXX) -o $@ -c -fPIC $(FLAGS) $<

@@ -90,7 +90,7 @@ void STMap::GetMapData(Int_t padRow, Int_t padLayer, Int_t &UAIdx, Int_t &coboId
 void STMap::LoadChToPadMap()
 {
   char dummy[25];
-  std::ifstream chToPadMap("ChToPad.map");
+  std::ifstream chToPadMap("Source/SPiRIT/mapping/ChToPad.map");
   chToPadMap.getline(dummy, 200);
 
   Int_t ch = -1;
@@ -103,7 +103,7 @@ void STMap::LoadChToPadMap()
 void STMap::LoadUAMap()
 {
   char dummy[25];
-  std::ifstream uaMap("UnitAsAd.map");
+  std::ifstream uaMap("Source/SPiRIT/mapping/UnitAsAd.map");
   uaMap.getline(dummy, 200);
 
   Int_t idx = -1;
