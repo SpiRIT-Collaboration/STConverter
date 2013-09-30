@@ -33,16 +33,17 @@ class STCore : public TObject {
 
     // getters
     STRawEvent *GetRawEvent();
+    STRawEvent *GetRawEvent(Int_t eventID);
 
   private:
-    Bool_t fIsDebugMode;
+    Int_t fStoppedFrameNo;
 
-    STRawEvent *fRawEvent;
+    STRawEvent *fRawEventPtr;
     STMap *fMapPtr;
     STPedestal *fPedestalPtr;
 
-    GETDecoder *fDecoder;
-    GETFrame *fFrame;
+    GETDecoder *fDecoderPtr;
+    GETFrame *fFramePtr;
 
     Bool_t fIsGraw;
     Bool_t fIsPedestalData;

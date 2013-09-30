@@ -31,21 +31,23 @@ class GETDecoder : public TObject
     GETDecoder(Char_t *filename);
     ~GETDecoder();
 
-    void Initialize();
-
     // setters
     void SetDebugMode(Bool_t value);
     Bool_t SetGraw(const Char_t *filename);
 
     // getters
     Int_t GetNumFrames();
+    Int_t GetCurrentFrameNo();
     GETFrame *GetFrame();
     GETFrame *GetFrame(Int_t frameNo);
 
   private:
+    void Initialize();
+
     Bool_t fDebugMode;
     void PrintFrameInfo(Int_t frameNo, Int_t eventID, Int_t coboID, Int_t asadID);
 
+    Bool_t SetFile(const Char_t *filename);
     void CountFrames();
     Bool_t IsNextFile();
 

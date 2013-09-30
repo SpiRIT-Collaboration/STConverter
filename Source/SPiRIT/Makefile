@@ -6,20 +6,24 @@ PREFIX = ST
 SRCDIR = src
 INCDIR = include
 
-GETDecoderINCDIR = ../GETDecoder/include
-GETDecoderLIB = ../GETDecoder/libGETDecoder.so
+GETDecoderDIR = $(shell pwd)/../GETDecoder
+GETDecoderINCDIR = $(GETDecoderDIR)/include
+#GETDecoderLIB = ../GETDecoder/libGETDecoder.so
 
 LIBNAME = libSPiRIT
 SOURCE = $(wildcard $(SRCDIR)/$(PREFIX)*.cc)
 HEADER = $(wildcard $(INCDIR)/$(PREFIX)*.hh)
 DICT = $(LIBNAME)Dict.cc
 LINKDEF = $(LIBNAME)LinkDef.hh
-FLAGS = -I./$(INCDIR) -I$(GETDecoderINCDIR) $(ROOT_CFLAGS)
+FLAGS = -I./$(INCDIR) -I$(GETDecoderINCDIR)  $(ROOT_CFLAGS)
 LIBDEST = ../..
 
 $(LIBNAME).so: $(SOURCE:.cc=.o) $(DICT:.cc=.o)
-	$(CXX) --shared -fPIC -o $@ $(ROOT_LIBS) $^ $(GETDecoderLIB)
+	$(CXX) --shared -fPIC -o $@ $(ROOT_LIBS) $^ $(GETDecoderDIR)/libGETDecoderDict.o $(GETDecoderDIR)/src/GETDecoder.o $(GETDecoderDIR)/src/GETFrame.o 
+#	$(CXX) --shared -fPIC -o $@ $(ROOT_LIBS) $^ -L$(GETDecoderDIR) -lGETDecoder
 	@ln -sf $(shell pwd)/$(LIBNAME).so $(LIBDEST)
+	@ln -sf $(shell pwd)/mapping/ChToPad.map $(LIBDEST)
+	@ln -sf $(shell pwd)/mapping/UnitAsAd.map $(LIBDEST)
 
 $(DICT): $(HEADER) $(LINKDEF)
 	rootcint -f $@ -c $^
@@ -38,6 +42,7 @@ clean:
 	@rm -rf *.o $(SRCDIR)/*.o
 	@rm -rf $(LINKDEF)
 	@rm -rf $(LIBNAME).so $(LIBDEST)/$(LIBNAME).so
+	@rm -rf $(LIBDEST)/*.map
 
 %.o: %.cc
 	$(CXX) -o $@ -c -fPIC $(FLAGS) $<

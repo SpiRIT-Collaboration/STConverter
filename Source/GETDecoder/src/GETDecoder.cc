@@ -36,7 +36,6 @@ GETDecoder::GETDecoder(Char_t *filename)
 {
   Initialize();
   SetGraw(filename);
-  CountFrames();
 }
 
 GETDecoder::~GETDecoder()
@@ -65,6 +64,16 @@ void GETDecoder::SetDebugMode(Bool_t value)
 
 Bool_t GETDecoder::SetGraw(const Char_t *filename)
 {
+  Bool_t isSetFile = SetFile(filename);
+
+  if (isSetFile)
+    CountFrames();
+
+  return isSetFile;
+}
+
+Bool_t GETDecoder::SetFile(const Char_t *filename)
+{
   if (fGraw.is_open())
     fGraw.close();
 
@@ -75,6 +84,7 @@ Bool_t GETDecoder::SetGraw(const Char_t *filename)
 
     return 0;
   } else {
+    std::cout << "== " << filename << " is opened!" << std::endl;
     fGraw.seekg(0);
     fFirstGraw = filename;
 
@@ -137,6 +147,11 @@ Int_t GETDecoder::GetNumFrames()
   return fNumFrames;
 }
 
+Int_t GETDecoder::GetCurrentFrameNo()
+{
+  return fCurrentFrameNo;
+}
+
 void GETDecoder::CountFrames()
 {
   UInt_t frameSize = 0;
@@ -160,7 +175,7 @@ void GETDecoder::CountFrames()
     fNumFrames++;
   }
 
-  SetGraw(fFirstGraw.Data());
+  SetFile(fFirstGraw.Data());
 }
 
 GETFrame *GETDecoder::GetFrame()
@@ -208,7 +223,7 @@ GETFrame *GETDecoder::GetFrame(Int_t frameNo)
     }
 
     if (frameNo < fCurrentFrameNo) {
-      SetGraw(fFirstGraw.Data());
+      SetFile(fFirstGraw.Data());
       fCurrentFrameNo = -1;
 
       return GetFrame(frameNo);

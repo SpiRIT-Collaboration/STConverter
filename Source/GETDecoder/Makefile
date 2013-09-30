@@ -5,13 +5,15 @@ CXX = g++
 PREFIX = GET
 SRCDIR = src
 INCDIR = include
-LIBNAME = libGETDecoder
+TARGET = GETDecoder
+LIBDEST = ../..
+
+LIBNAME = lib$(TARGET)
 SOURCE = $(wildcard $(SRCDIR)/$(PREFIX)*.cc)
 HEADER = $(wildcard $(INCDIR)/$(PREFIX)*.hh)
 DICT = $(LIBNAME)Dict.cc
 LINKDEF = $(LIBNAME)LinkDef.hh
 FLAGS = -I./$(INCDIR) $(ROOT_CFLAGS)
-LIBDEST = ../..
 
 $(LIBNAME).so: $(SOURCE:.cc=.o) $(DICT:.cc=.o)
 	$(CXX) --shared -fPIC -o $@ $(ROOT_LIBS) $^
@@ -33,7 +35,7 @@ clean:
 	@rm -rf $(DICT:.cc=.*)
 	@rm -rf *.o $(SRCDIR)/*.o
 	@rm -rf $(LINKDEF)
-	@rm -rf $(LIBNAME).so $(LIBDEST)/$(LIBNAME).so
+	@rm -rf $(LIBNAME).* $(LIBDEST)/$(LIBNAME).so
 
 %.o: %.cc
 	$(CXX) -o $@ -c -fPIC $(FLAGS) $<
