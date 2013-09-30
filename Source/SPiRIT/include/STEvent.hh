@@ -1,8 +1,8 @@
 // =================================================
-//  STEvent Class                          
+//  STRawEvent Class                          
 //                                                  
 //  Description:                                    
-//    Container for an event data
+//    Container for a raw event data
 //                                                  
 //  Genie Jhang ( geniejhang@majimak.com )          
 //  2013. 08. 16                                    
@@ -16,32 +16,29 @@
 
 #include "STPad.hh"
 
-class STEvent : public TObject {
+class STRawEvent : public TObject {
   public:
-    STEvent();
-    ~STEvent();
+    STRawEvent();
+    ~STRawEvent();
 
     void PrintPads();
-    void GotoFirst();
 
-    // Setters
+    // setters
     void SetEventID(Int_t evtid);
     void SetPad(STPad *pad);
 
-    // Getters
+    // getters
     Int_t GetEventID();
     Int_t GetNumPads();
-    STPad *GetNextPad();
     STPad *GetPad(Int_t padNo);
     STPad *GetPad(Int_t row, Int_t layer); 
 
   private:
-    Int_t eventID;
-    Int_t firedPads;
-    Int_t currentPadNo;
-    STPad *pads[12096];
+    Int_t fEventID;
+    Int_t fNumPads;
+    STPad *fPadsArray[12096];
 
-  ClassDef(STEvent, 1);
+  ClassDef(STRawEvent, 1);
 };
 
 #endif

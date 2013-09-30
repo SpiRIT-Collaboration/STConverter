@@ -1,5 +1,5 @@
 // =================================================
-//  GJCoBoFrame Class
+//  GETFrame Class
 // 
 //  Description:
 //    Storage of a frame from CoBo
@@ -12,16 +12,16 @@
 //      Start writing class
 // =================================================
 
-#ifndef _GJCOBOFRAME_H_
-#define _GJCOBOFRAME_H_
+#ifndef _GETFRAME_H_
+#define _GETFRAME_H_
 
 #include "TObject.h"
 
-class GJCoBoFrame : public TObject
+class GETFrame : public TObject
 {
   public:
-    GJCoBoFrame();
-    ~GJCoBoFrame();
+    GETFrame();
+    ~GETFrame();
 
     // setters
     void SetEventID(UInt_t value);
@@ -39,12 +39,12 @@ class GJCoBoFrame : public TObject
     Int_t GetADC(Int_t agetIdx, Int_t chIdx, Int_t buckIdx);
 
   private:
-    UInt_t eventIdx;
-    Int_t coboIdx;
-    Int_t asadIdx;
-    Int_t adc[4*68*512];
+    UInt_t fEventIdx;
+    Int_t fCoboIdx;
+    Int_t fAsadIdx;
+    Int_t fAdc[4*68*512];
 
-  ClassDef(GJCoBoFrame, 1);
+  ClassDef(GETFrame, 1);
 };
 
 #endif

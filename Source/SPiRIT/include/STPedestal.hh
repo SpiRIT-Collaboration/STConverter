@@ -28,10 +28,7 @@ class STPedestal : public TObject {
     ~STPedestal() {};
 
     void Initialize();
-    void SetPedestalData(Char_t *pedestalData);
-
-    Bool_t GetUsePedestalData();
-    void SetUsePedestalData(Bool_t value);
+    Bool_t SetPedestalData(Char_t *pedestalData);
 
     // Look up pedestal value(0) and sigma(1) array from pedestal run data
     void GetPedestal(Int_t *samples, Double_t *pedestal, Int_t startBuckIdx = 10, Int_t numSamples = 20);
@@ -45,8 +42,6 @@ class STPedestal : public TObject {
 
     Double_t pedestal;
     Double_t pedestalSigma;
-
-    Bool_t usePedestalData;
 
   ClassDef(STPedestal, 1);
 };

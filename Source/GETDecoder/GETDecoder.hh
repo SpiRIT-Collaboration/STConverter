@@ -1,5 +1,5 @@
 // =================================================
-//  GJCoBoDecoder Class
+//  GETDecoder Class
 // 
 //  Description:
 //    Read the raw file from CoBo and process it
@@ -13,8 +13,8 @@
 //      Start writing class
 // =================================================
 
-#ifndef _GJCOBODECODER_H_
-#define _GJCOBODECODER_H_
+#ifndef _GETDECODER_H_
+#define _GETDECODER_H_
 
 #include <fstream>
 
@@ -22,43 +22,43 @@
 #include "TROOT.h"
 #include "TString.h"
 
-class GJCoBoFrame;
+class GETFrame;
 
-class GJCoBoDecoder : public TObject
+class GETDecoder : public TObject
 {
   public:
-    GJCoBoDecoder();
-    GJCoBoDecoder(Char_t *filename);
-    ~GJCoBoDecoder();
+    GETDecoder();
+    GETDecoder(Char_t *filename);
+    ~GETDecoder();
 
     void Initialize();
 
     // setters
     void SetDebugMode(Bool_t value);
-    void SetGrawFile(const Char_t *filename);
+    Bool_t SetGraw(const Char_t *filename);
 
     // getters
     Int_t GetNumFrames();
-    GJCoBoFrame *GetFrame();
-    GJCoBoFrame *GetFrame(Int_t frameNo);
+    GETFrame *GetFrame();
+    GETFrame *GetFrame(Int_t frameNo);
 
   private:
-    Bool_t debugMode;
+    Bool_t fIsDebugMode;
     void PrintFrameInfo(Int_t frameNo, Int_t eventID, Int_t coboID, Int_t asadID);
 
     void CountFrames();
-    Bool_t NextFile();
+    Bool_t IsNextFile();
 
-    Int_t numFrames;
+    Int_t fNumFrames;
   
-    std::ifstream grawFile;
-    TString firstGrawFile;
-    TString nextGrawFile;
+    std::ifstream fGraw;
+    TString fFirstGraw;
+    TString fNextGraw;
 
-    GJCoBoFrame *aFrame;
-    Int_t currentFrameNo;
+    GETFrame *fFrame;
+    Int_t fCurrentFrameNo;
 
-  ClassDef(GJCoBoDecoder, 1);
+  ClassDef(GETDecoder, 1);
 };
 
 #endif

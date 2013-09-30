@@ -30,8 +30,6 @@ STPedestal::STPedestal(Char_t *pedestalData) {
 }
 
 void STPedestal::Initialize() {
-  usePedestalData = 0;
-
   openFile = NULL;
   pedestalTree = NULL;
 
@@ -39,7 +37,7 @@ void STPedestal::Initialize() {
   pedestalSigma = 0;
 }
 
-void STPedestal::SetPedestalData(Char_t *pedestalData) {
+Bool_t STPedestal::SetPedestalData(Char_t *pedestalData) {
   if (openFile != NULL)
     delete openFile;
 
@@ -48,18 +46,10 @@ void STPedestal::SetPedestalData(Char_t *pedestalData) {
     pedestalTree -> SetBranchAddress("pedestal", &pedestal);
     pedestalTree -> SetBranchAddress("pedestalSigma", &pedestalSigma);
 
-    SetUsePedestalData(1);
+    return 1;
   }
-}
 
-Bool_t STPedestal::GetUsePedestalData()
-{
-  return usePedestalData;
-}
-
-void STPedestal::SetUsePedestalData(Bool_t value)
-{
-  usePedestalData = value;
+  return 0;
 }
 
 void STPedestal::GetPedestal(Int_t *samples, Double_t *pedestalArray, Int_t startIdx, Int_t numPedestalSamples) {
