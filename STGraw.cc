@@ -33,6 +33,10 @@ STGraw::STGraw()
     maxADCIdx[i] = 0;
 }
 
+STGraw::~STGraw()
+{
+}
+
 Int_t STGraw::GetEventID()
 {
   return eventIdx;

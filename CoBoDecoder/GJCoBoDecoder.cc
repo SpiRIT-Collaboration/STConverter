@@ -47,6 +47,8 @@ GJCoBoDecoder::~GJCoBoDecoder()
 
 void GJCoBoDecoder::Initialize()
 {
+  debugMode = 0;
+
   numFrames = 0;
 
   firstGrawFile = "";
@@ -54,6 +56,11 @@ void GJCoBoDecoder::Initialize()
 
   aFrame = NULL;
   currentFrameNo = -1;
+}
+
+void GJCoBoDecoder::SetDebugMode(Bool_t value)
+{
+  debugMode = value;
 }
 
 void GJCoBoDecoder::SetGrawFile(const Char_t *filename)
@@ -64,7 +71,7 @@ void GJCoBoDecoder::SetGrawFile(const Char_t *filename)
   grawFile.open(filename, std::ios::in|std::ios::binary);
 
   if (!(grawFile.is_open())) {
-    std::cerr << "== GRAW file open error! Check it exists!" << std::endl;
+    std::cout << "== GRAW file open error! Check it exists!" << std::endl;
 
     return;
   } else {
@@ -161,18 +168,21 @@ GJCoBoFrame *GJCoBoDecoder::GetFrame()
 
 GJCoBoFrame *GJCoBoDecoder::GetFrame(Int_t frameNo)
 {
-  if (currentFrameNo == frameNo && aFrame != NULL)
-    return aFrame;
-  else if (frameNo >= numFrames) {
-    std::cout << "== Last Frame!" << std::endl;
+  if (currentFrameNo == frameNo) {
+    if (debugMode)
+      PrintFrameInfo(frameNo, aFrame -> GetEventID(), aFrame -> GetCoboID(), aFrame -> GetAsadID());
 
     return aFrame;
   }
+  else if (frameNo >= numFrames) {
+    std::cout << "== Last Frame!" << std::endl;
 
-  if (aFrame != NULL)
-    delete aFrame;
+    return NULL;
+  } else if (frameNo < 0) {
+    std::cout << "== Frame number should be a positive integer!" << std::endl;
 
-  aFrame = new GJCoBoFrame();
+    return NULL;
+  }
 
   while (1) {
     UInt_t frameSize;
@@ -183,6 +193,9 @@ GJCoBoFrame *GJCoBoDecoder::GetFrame(Int_t frameNo)
     UShort_t asadIdx;
 
     while (frameNo > currentFrameNo + 1) {
+      if (debugMode)
+        std::cout << "== Skipping Frame No. " << currentFrameNo + 1 << std::endl;
+
       grawFile.ignore(1);
       grawFile.read(reinterpret_cast<Char_t *>(&frameSize), 3);
 
@@ -194,9 +207,9 @@ GJCoBoFrame *GJCoBoDecoder::GetFrame(Int_t frameNo)
 
     if (frameNo < currentFrameNo) {
       SetGrawFile(firstGrawFile.Data());
-      currentFrameNo = 0;
+      currentFrameNo = -1;
 
-      GetFrame(frameNo);
+      return GetFrame(frameNo);
     }
 
     grawFile.ignore(8);
@@ -225,6 +238,13 @@ GJCoBoFrame *GJCoBoDecoder::GetFrame(Int_t frameNo)
     coboIdx = (htons(coboIdx) >> 8);
     asadIdx = (htons(asadIdx) >> 8);
 
+    if (debugMode)
+      PrintFrameInfo(frameNo, eventIdx, coboIdx, asadIdx);
+
+    if (aFrame != NULL)
+      delete aFrame;
+
+    aFrame = new GJCoBoFrame();
     aFrame -> SetEventID(eventIdx);
     aFrame -> SetCoboID(coboIdx);
     aFrame -> SetAsadID(asadIdx);
@@ -251,4 +271,13 @@ GJCoBoFrame *GJCoBoDecoder::GetFrame(Int_t frameNo)
 
     return aFrame;
   }
+}
+
+void GJCoBoDecoder::PrintFrameInfo(Int_t frameNo, Int_t eventID, Int_t coboID, Int_t asadID)
+{
+    std::cout << "== Frame Info -";
+    std::cout << " Frame:" << frameNo;
+    std::cout << " Event:" << eventID;
+    std::cout << " CoBo:" << coboID;
+    std::cout << " AsAd:" << asadID << std::endl;
 }

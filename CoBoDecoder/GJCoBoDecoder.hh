@@ -34,6 +34,7 @@ class GJCoBoDecoder : public TObject
     void Initialize();
 
     // setters
+    void SetDebugMode(Bool_t value);
     void SetGrawFile(const Char_t *filename);
 
     // getters
@@ -42,6 +43,9 @@ class GJCoBoDecoder : public TObject
     GJCoBoFrame *GetFrame(Int_t frameNo);
 
   private:
+    Bool_t debugMode;
+    void PrintFrameInfo(Int_t frameNo, Int_t eventID, Int_t coboID, Int_t asadID);
+
     void CountFrames();
     Bool_t NextFile();
 

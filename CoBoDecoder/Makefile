@@ -2,7 +2,7 @@ ROOT_CFLAGS = $(shell root-config --cflags)
 ROOT_LIBS = $(shell root-config --libs)
 CXX = g++
 
-LIBNAME = libGJDecoder
+LIBNAME = libGJCoBoDecoder
 SOURCE = $(wildcard GJ*.cc)
 DICT = $(LIBNAME)Dict.cc
 LINKDEF = $(LIBNAME)LinkDef.hh

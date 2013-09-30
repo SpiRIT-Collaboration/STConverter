@@ -19,7 +19,7 @@ class STGraw : public TObject
 {
   public:
     STGraw();
-    ~STGraw() {};
+    ~STGraw();
 
     Int_t GetEventID();
     Int_t GetCoboID();
