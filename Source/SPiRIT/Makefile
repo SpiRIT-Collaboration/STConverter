@@ -7,7 +7,7 @@ SRCDIR = src
 INCDIR = include
 
 GETDecoderINCDIR = ../GETDecoder/include
-GETDecoderLIB = ../libGETDecoder.so
+GETDecoderLIB = ../GETDecoder/libGETDecoder.so
 
 LIBNAME = libSPiRIT
 SOURCE = $(wildcard $(SRCDIR)/$(PREFIX)*.cc)
