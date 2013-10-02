@@ -13,6 +13,7 @@
 // =================================================
 
 #include <iostream>
+#include <cmath>
 
 #include "GETFrame.hh"
 
@@ -99,13 +100,16 @@ void GETFrame::CalcPedestal(Int_t startTb, Int_t numTbs)
         pedestal[0] += (fRawAdc[index + iTb] - pedestal[0])/(Double_t)(iTb + 1);
 
         if (iTb > 0)
-          pedestal[1] = iTb*pedestal[1]/(Double_t)(iTb + 1) + (fRawAdc[index + iTb] - pedestal[0])*(fRawAdc[index + iTb] - pedestal[0])/(Double_t)(iTb);
+          pedestal[1] = iTb*pedestal[1]/(Double_t)(iTb + 1) + pow(fRawAdc[index + iTb] - pedestal[0], 2)/(Double_t)(iTb);
       }
+
+      pedestal[1] = sqrt(pedestal[1]);
 
       index = GetIndex(iAget, iCh, 0);
       for (Int_t iTb = 0; iTb < 512; iTb++) {
-        Double_t adc = pedestal[0] - 5*pedestal[1] - fRawAdc[index + iTb];
-        fAdc[index + iTb] = (adc < 0 ? 0 : adc);
+//        Double_t adc = pedestal[0] - 5*pedestal[1] - fRawAdc[index + iTb];
+        Double_t adc = pedestal[0] - fRawAdc[index + iTb];
+        fAdc[index + iTb] = (adc < 0 || fRawAdc[index + iTb] == 0 ? 0 : adc);
 
         // Discard the first and the last bins
         if (iTb > 0 && iTb < 511) {
@@ -115,6 +119,8 @@ void GETFrame::CalcPedestal(Int_t startTb, Int_t numTbs)
       }
     }
   }
+
+  fPedestalSubtracted = 1;
 }
 
 Int_t GETFrame::GetMaxADCIdx(Int_t agetIdx, Int_t chIdx)
