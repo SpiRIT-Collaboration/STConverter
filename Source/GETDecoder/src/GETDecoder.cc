@@ -2,8 +2,8 @@
 //  GETDecoder Class
 // 
 //  Description:
-//    Read the raw file from CoBo and process it
-//    into GETEvent class
+//    Read the raw file from GET electronics
+//    and process it into GETFrame class
 // 
 //  Author:
 //    Genie Jhang ( geniejhang@majimak.com )
@@ -29,23 +29,31 @@ ClassImp(GETDecoder);
 
 GETDecoder::GETDecoder()
 {
+  // Constructor
+
   Initialize();
 }
 
 GETDecoder::GETDecoder(Char_t *filename)
 {
+  // Constructor with raw data file
+
   Initialize();
   SetGraw(filename);
 }
 
 GETDecoder::~GETDecoder()
 {
+  // Destructor
+
   if(fFrame != NULL)
     delete fFrame;
 }
 
 void GETDecoder::Initialize()
 {
+  // Initialize variables used in the class
+
   fDebugMode = 0;
 
   fNumFrames = 0;
@@ -59,11 +67,18 @@ void GETDecoder::Initialize()
 
 void GETDecoder::SetDebugMode(Bool_t value)
 {
+  // Setting debug mode.
+  // If set to 1, more information is printed out on the screen.
+
   fDebugMode = value;
 }
 
 Bool_t GETDecoder::SetGraw(const Char_t *filename)
 {
+  // Set the data file to the class.
+  // After setting, it counts how many frames in the file including continuing files.
+  // This method returns 1 if the file is loaded properly.
+
   Bool_t isSetFile = SetFile(filename);
 
   if (isSetFile)
@@ -74,6 +89,8 @@ Bool_t GETDecoder::SetGraw(const Char_t *filename)
 
 Bool_t GETDecoder::SetFile(const Char_t *filename)
 {
+  // Set the data file to the class.
+
   if (fGraw.is_open())
     fGraw.close();
 
@@ -94,6 +111,9 @@ Bool_t GETDecoder::SetFile(const Char_t *filename)
 
 Bool_t GETDecoder::IsNextFile()
 {
+  // Searches the next file and set it if exists.
+  // Returns 1 if successful.
+
   TObjArray *pathElements = NULL;
   if (!fNextGraw.EqualTo(""))
    pathElements = fNextGraw.Tokenize("/");
@@ -144,16 +164,23 @@ Bool_t GETDecoder::IsNextFile()
 
 Int_t GETDecoder::GetNumFrames()
 {
+  // Returns the number of frames counted by CountFrames() method.
+
   return fNumFrames;
 }
 
 Int_t GETDecoder::GetCurrentFrameNo()
 {
+  // Returns the frame number currently read and returned frame.
+
   return fCurrentFrameNo;
 }
 
 void GETDecoder::CountFrames()
 {
+  // Counts the number of frames in the set file and continuing files.
+
+  fNumFrames = 0;
   UInt_t frameSize = 0;
 
   while (1) {
@@ -180,11 +207,15 @@ void GETDecoder::CountFrames()
 
 GETFrame *GETDecoder::GetFrame()
 {
+  // Returns next frame.
+
   return GetFrame(fCurrentFrameNo + 1);
 }
 
 GETFrame *GETDecoder::GetFrame(Int_t frameNo)
 {
+  // Returns specific frame of given frame number.
+
   if (fCurrentFrameNo == frameNo) {
     if (fDebugMode)
       PrintFrameInfo(frameNo, fFrame -> GetEventID(), fFrame -> GetCoboID(), fFrame -> GetAsadID());
@@ -292,9 +323,11 @@ GETFrame *GETDecoder::GetFrame(Int_t frameNo)
 
 void GETDecoder::PrintFrameInfo(Int_t frameNo, Int_t eventID, Int_t coboID, Int_t asadID)
 {
-    std::cout << "== Frame Info -";
-    std::cout << " Frame:" << frameNo;
-    std::cout << " Event:" << eventID;
-    std::cout << " CoBo:" << coboID;
-    std::cout << " AsAd:" << asadID << std::endl;
+  // Prints the information of the returned frame.
+
+  std::cout << "== Frame Info -";
+  std::cout << " Frame:" << frameNo;
+  std::cout << " Event:" << eventID;
+  std::cout << " CoBo:" << coboID;
+  std::cout << " AsAd:" << asadID << std::endl;
 }

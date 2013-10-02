@@ -21,6 +21,9 @@ ClassImp(GETFrame);
 
 GETFrame::GETFrame()
 {
+  // Constructor
+  // Initializes the variables used in the class.
+
   fEventIdx = 0;
   fCoboIdx = 0;
   fAsadIdx = 0;
@@ -36,25 +39,34 @@ GETFrame::GETFrame()
 
 GETFrame::~GETFrame()
 {
+  // Destructor
 }
 
 void GETFrame::SetEventID(UInt_t value)
 {
+  // Sets the event number.
+
   fEventIdx = value;
 }
 
 void GETFrame::SetCoboID(UShort_t value)
 {
+  // Sets the CoBo ID.
+
   fCoboIdx = value;
 }
 
 void GETFrame::SetAsadID(UShort_t value)
 {
+  // Sets the AsAd ID.
+
   fAsadIdx = value;
 }
 
 void GETFrame::SetRawADC(UShort_t agetIdx, UShort_t chIdx, UShort_t buckIdx, UShort_t value)
 {
+  // Sets the raw ADC value of the specific bucket of the channel, chIdx, in the AGET, agetIdx.
+
   Int_t index = GetIndex(agetIdx, chIdx, buckIdx);
 
   fRawAdc[index] = value;
@@ -62,21 +74,29 @@ void GETFrame::SetRawADC(UShort_t agetIdx, UShort_t chIdx, UShort_t buckIdx, USh
 
 UInt_t GETFrame::GetEventID()
 {
+  // Returns the event number of this frame.
+
   return fEventIdx;
 }
 
 Int_t GETFrame::GetCoboID()
 {
+  // Returns the CoBo ID of this frame.
+
   return fCoboIdx;
 }
 
 Int_t GETFrame::GetAsadID()
 {
+  // Returns the AsAd ID of this frame.
+
   return fAsadIdx;
 }
 
 Int_t *GETFrame::GetRawADC(Int_t agetIdx, Int_t chIdx)
 {
+  // Returns the raw ADC values array with 512 time buckets of the channel, chIdx, in the AGET, agetIdx.
+
   Int_t index = GetIndex(agetIdx, chIdx, 0);
 
   return fRawAdc + index;
@@ -84,6 +104,8 @@ Int_t *GETFrame::GetRawADC(Int_t agetIdx, Int_t chIdx)
 
 Int_t GETFrame::GetRawADC(Int_t agetIdx, Int_t chIdx, Int_t buckIdx)
 {
+  // Returns the ADC value of the specific time bucket of the channel, chIdx, in the AGET, agetIdx.
+
   Int_t index = GetIndex(agetIdx, chIdx, buckIdx);
 
   return fRawAdc[index]; 
@@ -91,6 +113,11 @@ Int_t GETFrame::GetRawADC(Int_t agetIdx, Int_t chIdx, Int_t buckIdx)
 
 void GETFrame::CalcPedestal(Int_t startTb, Int_t numTbs)
 {
+  // Calculates pedestal and its RMS value using numTbs time buckets starting
+  // from startTb and subtract the pedestal value from raw ADC.
+  // After this method, user can get the pedestal-subtracted values using
+  // GetADC() method.
+
   for (Int_t iAget = 0; iAget < 4; iAget++) {
     for (Int_t iCh = 0; iCh < 68; iCh++) {
       Int_t index = GetIndex(iAget, iCh, startTb);
@@ -125,6 +152,9 @@ void GETFrame::CalcPedestal(Int_t startTb, Int_t numTbs)
 
 Int_t GETFrame::GetMaxADCIdx(Int_t agetIdx, Int_t chIdx)
 {
+  // Returns the time bucket index of the maximum ADC value.
+  // This method is enabled after CalcPedestal() method.
+
   if (!fPedestalSubtracted) {
     std::cout << "== Run CalcPedstal(Int_t start, Int_t numBins) first!" << std::endl;
 
@@ -138,6 +168,9 @@ Int_t GETFrame::GetMaxADCIdx(Int_t agetIdx, Int_t chIdx)
 
 Double_t *GETFrame::GetADC(Int_t agetIdx, Int_t chIdx)
 {
+  // Returns the pedestal-subtracted ADC values array with 512 time buckets of the channel, chIdx, in the AGET, agetIdx.
+  // This method is enabled after CalcPedestal() method.
+
   if (!fPedestalSubtracted) {
     std::cout << "== Run CalcPedstal(Int_t startTb, Int_t numTbs) first!" << std::endl;
 
@@ -151,6 +184,9 @@ Double_t *GETFrame::GetADC(Int_t agetIdx, Int_t chIdx)
 
 Double_t GETFrame::GetADC(Int_t agetIdx, Int_t chIdx, Int_t buckIdx)
 {
+  // Returns the pedestal-subtracted ADC value of the specific time bucket of the channel, chIdx, in the AGET, agetIdx.
+  // This method is enabled after CalcPedestal() method.
+
   if (!fPedestalSubtracted) {
     std::cout << "== Run CalcPedstal(Int_t start, Int_t numBins) first!" << std::endl;
 
@@ -164,5 +200,7 @@ Double_t GETFrame::GetADC(Int_t agetIdx, Int_t chIdx, Int_t buckIdx)
 
 Int_t GETFrame::GetIndex(Int_t agetIdx, Int_t chIdx, Int_t buckIdx)
 {
+  // Internally used method to get the index of the array.
+
   return agetIdx*68*512 + chIdx*512 + buckIdx;
 }
