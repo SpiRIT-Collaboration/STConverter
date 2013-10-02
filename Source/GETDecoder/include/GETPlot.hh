@@ -32,7 +32,7 @@ class GETPlot : public TObject
     // setters
     void SetDecoder(GETDecoder *decoder);
 
-    void SetAgetRange(Double_t minx, Double_t maxx, Double_t miny, Double_t maxy);
+    void SetAgetRange(Int_t type, Double_t minx, Double_t maxx, Double_t miny, Double_t maxy);
 
     // getters
     TCanvas *ShowSummarySpectra();
@@ -53,10 +53,10 @@ class GETPlot : public TObject
 
     TGraph *fAget[4];
 
-    Double_t fAgetMinX;
-    Double_t fAgetMaxX;
-    Double_t fAgetMinY;
-    Double_t fAgetMaxY;
+    Double_t fAgetMinX[3];
+    Double_t fAgetMaxX[3];
+    Double_t fAgetMinY[3];
+    Double_t fAgetMaxY[3];
 
   ClassDef(GETPlot, 1);
 };

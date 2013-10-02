@@ -54,10 +54,7 @@ void GETPlot::Initialize()
   minTb = 0;
   maxTb = 276;
 
-  fAgetMinX = minTb - 1;
-  fAgetMaxX = maxTb + 1;
-  fAgetMinY = -10;
-  fAgetMaxY = 4106;
+  SetAgetRange(-1, minTb - 1, maxTb + 1, -10, 4106);
 
   fDecoder = NULL;
   for (Int_t i = 0; i < 4; i++)
@@ -70,7 +67,7 @@ void GETPlot::SetDecoder(GETDecoder *decoder)
 
   fDecoder = decoder;
 
-  SetAgetRange(minTb - 1, maxTb + 1, -10, 4106);
+  SetAgetRange(-1, minTb - 1, maxTb + 1, -10, 4106);
 
   TCanvas *cvs = NULL;
   for (Int_t i = 0; i < 3; i++) {
@@ -82,12 +79,21 @@ void GETPlot::SetDecoder(GETDecoder *decoder)
       
 }
 
-void GETPlot::SetAgetRange(Double_t minx, Double_t maxx, Double_t miny, Double_t maxy)
+void GETPlot::SetAgetRange(Int_t type, Double_t minx, Double_t maxx, Double_t miny, Double_t maxy)
 {
-  fAgetMinX = minx;
-  fAgetMaxX = maxx;
-  fAgetMinY = miny;
-  fAgetMaxY = maxy;
+  if (type == -1) {
+    for (Int_t iType = 0; iType < 3; iType++) {
+      fAgetMinX[iType] = minx;
+      fAgetMaxX[iType] = maxx;
+      fAgetMinY[iType] = miny;
+      fAgetMaxY[iType] = maxy;
+    }
+  } else {
+    fAgetMinX[type] = minx;
+    fAgetMaxX[type] = maxx;
+    fAgetMinY[type] = miny;
+    fAgetMaxY[type] = maxy;
+  }
 }
 
 TCanvas *GETPlot::ShowSummarySpectra()
@@ -373,10 +379,10 @@ void GETPlot::ResetGraph(Int_t type, Bool_t first)
         cvs -> cd(iAget + 1);
 
         TFrame *box = gPad -> GetFrame();
-        fAgetMinX = box -> GetX1();
-        fAgetMaxX = box -> GetX2();
-        fAgetMinY = box -> GetY1();
-        fAgetMaxY = box -> GetY2();
+        fAgetMinX[type] = box -> GetX1();
+        fAgetMaxX[type] = box -> GetX2();
+        fAgetMinY[type] = box -> GetY1();
+        fAgetMaxY[type] = box -> GetY2();
 
         fAget[iAget] -> Clear();
       }
@@ -390,11 +396,11 @@ void GETPlot::ResetGraph(Int_t type, Bool_t first)
       fAget[iAget] -> GetXaxis() -> SetTitle("Time Bucket");
       fAget[iAget] -> GetXaxis() -> CenterTitle();
       fAget[iAget] -> GetXaxis() -> SetLimits(-5, 516);
-      fAget[iAget] -> GetXaxis() -> SetRangeUser(fAgetMinX, fAgetMaxX);
+      fAget[iAget] -> GetXaxis() -> SetRangeUser(fAgetMinX[type], fAgetMaxX[type]);
       fAget[iAget] -> GetYaxis() -> SetTitle("ADC Channel");
       fAget[iAget] -> GetYaxis() -> CenterTitle();
       fAget[iAget] -> GetYaxis() -> SetLimits(-10, 4106);
-      fAget[iAget] -> GetYaxis() -> SetRangeUser(fAgetMinY, fAgetMaxY);
+      fAget[iAget] -> GetYaxis() -> SetRangeUser(fAgetMinY[type], fAgetMaxY[type]);
     }
   }
 }
