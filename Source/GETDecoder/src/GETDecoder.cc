@@ -223,7 +223,7 @@ GETFrame *GETDecoder::GetFrame(Int_t frameNo)
     return fFrame;
   }
   else if (frameNo >= fNumFrames) {
-    std::cout << "== Last Frame!" << std::endl;
+    std::cout << "== Last frame reached! (" << fNumFrames - 1 << ")" << std::endl;
 
     return NULL;
   } else if (frameNo < 0) {

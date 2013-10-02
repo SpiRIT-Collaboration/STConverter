@@ -117,6 +117,10 @@ void GETFrame::CalcPedestal(Int_t startTb, Int_t numTbs)
   // from startTb and subtract the pedestal value from raw ADC.
   // After this method, user can get the pedestal-subtracted values using
   // GetADC() method.
+  //
+  // Average: Begin_Latex(fontsize=24)#mu_{n+1} = #mu_{n} + #frac{x_{n} - #mu_{n}}{n+1}End_Latex
+  // RMS: Begin_Latex(fontsize=24)#sigma_{n+1}^{2} = #frac{n}{n+1} #sigma_{n}^{2} + #frac{(x_{n+1} - #mu_{n+1})^{2}}{n}End_Latex
+  
 
   for (Int_t iAget = 0; iAget < 4; iAget++) {
     for (Int_t iCh = 0; iCh < 68; iCh++) {

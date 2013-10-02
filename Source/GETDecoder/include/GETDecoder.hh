@@ -2,8 +2,8 @@
 //  GETDecoder Class
 // 
 //  Description:
-//    Read the raw file from CoBo and process it
-//    into GETEvent class
+//    Read the raw file from GET electronics
+//    and process it into GETFrame class
 // 
 //  Author:
 //    Genie Jhang ( geniejhang@majimak.com )
