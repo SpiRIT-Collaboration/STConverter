@@ -28,21 +28,32 @@ class GETFrame : public TObject
     void SetCoboID(UShort_t value);
     void SetAsadID(UShort_t value);
 
-    void SetADC(UShort_t agetIdx, UShort_t chIdx, UShort_t buckIdx, UShort_t value);
+    void SetRawADC(UShort_t agetIdx, UShort_t chIdx, UShort_t buckIdx, UShort_t value);
 
     // getters
     UInt_t GetEventID();
     Int_t GetCoboID();
     Int_t GetAsadID();
 
-    Int_t *GetADC(Int_t agetIdx, Int_t chIdx);
-    Int_t GetADC(Int_t agetIdx, Int_t chIdx, Int_t buckIdx);
+    Int_t *GetRawADC(Int_t agetIdx, Int_t chIdx);
+    Int_t GetRawADC(Int_t agetIdx, Int_t chIdx, Int_t buckIdx);
+
+    void CalcPedestal(Int_t startTb = 10, Int_t numTbs = 20);
+    Int_t GetMaxADCIdx(Int_t agetIdx, Int_t chIdx);
+    Double_t *GetADC(Int_t agetIdx, Int_t chIdx);
+    Double_t GetADC(Int_t agetIdx, Int_t chIdx, Int_t buckIdx);
 
   private:
+    Int_t GetIndex(Int_t agetIdx, Int_t chIdx, Int_t buckIdx);
+
     UInt_t fEventIdx;
     Int_t fCoboIdx;
     Int_t fAsadIdx;
-    Int_t fAdc[4*68*512];
+    Int_t fRawAdc[4*68*512];
+
+    Bool_t fPedestalSubtracted;
+    Int_t fMaxAdcIdx[4*68];
+    Double_t fAdc[4*68*512];
 
   ClassDef(GETFrame, 1);
 };

@@ -281,7 +281,7 @@ GETFrame *GETDecoder::GetFrame(Int_t frameNo)
       if (chanIdx >= 68 || agetIdx >= 4 || buckIdx >= 512)
         continue; 
                                                                      
-      fFrame -> SetADC(agetIdx, chanIdx, buckIdx, sample); 
+      fFrame -> SetRawADC(agetIdx, chanIdx, buckIdx, sample); 
     }
 
     fCurrentFrameNo = frameNo;
