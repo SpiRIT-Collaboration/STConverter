@@ -1,5 +1,6 @@
 TCanvas *cvs;
 TH2D *hAsad[4];
+TBox *box;
 
 void PrepareCanvas(Int_t numAsads = 4) {
   gStyle -> SetOptStat(0);
@@ -59,8 +60,8 @@ void AmpVsCh(TString date, TString data, TString file0, TString file1, TString f
 
   PrepareCanvas(numData);
 
-  gSystem -> Load("libSPiRIT");
-  STReadRaw *a[4] = {0};
+  gSystem -> Load("libGETDecoder");
+  GETDecoder *a[4] = {0};
 
   /*
   TString date = "20130911";
@@ -116,34 +117,46 @@ void AmpVsCh(TString date, TString data, TString file0, TString file1, TString f
   TString file3 = "CoBo_AsAd3_2013-09-12T10-45-28.200_0000.graw";
   */
 
-  a[0] = new STReadRaw(Form("/Volumes/SPiRIT_data/test_%s/%s/%s", date.Data(), data.Data(), file0.Data()));
-  a[1] = new STReadRaw(Form("/Volumes/SPiRIT_data/test_%s/%s/%s", date.Data(), data.Data(), file1.Data()));
+  a[0] = new GETDecoder(Form("/Volumes/SPiRIT_data/test_%s/%s/%s", date.Data(), data.Data(), file0.Data()));
+  a[1] = new GETDecoder(Form("/Volumes/SPiRIT_data/test_%s/%s/%s", date.Data(), data.Data(), file1.Data()));
   if (numData > 2)
-    a[2] = new STReadRaw(Form("/Volumes/SPiRIT_data/test_%s/%s/%s", date.Data(), data.Data(), file2.Data()));
+    a[2] = new GETDecoder(Form("/Volumes/SPiRIT_data/test_%s/%s/%s", date.Data(), data.Data(), file2.Data()));
   if (numData > 3)
-    a[3] = new STReadRaw(Form("/Volumes/SPiRIT_data/test_%s/%s/%s", date.Data(), data.Data(), file3.Data()));
+    a[3] = new GETDecoder(Form("/Volumes/SPiRIT_data/test_%s/%s/%s", date.Data(), data.Data(), file3.Data()));
   
-  STGraw *ea[4] = {0};
+  GETFrame *ea[4] = {0};
 
   for (Int_t j = 0; j < numData; j++) {
-    while (ea[j] = a[j] -> GetGraw()) {
+    while (ea[j] = a[j] -> GetFrame()) {
       if (ea[j] == NULL) break;
+      ea[j] -> CalcPedestal(5, 50);
       for (Int_t i = 0; i < 68; i++) {
-        hAsad[j] -> Fill(i, (Double_t) ea[j] -> GetMaxADC(0, i));
-        hAsad[j] -> Fill(i + 68, (Double_t) ea[j] -> GetMaxADC(1, i));
-        hAsad[j] -> Fill(i + 68*2, (Double_t) ea[j] -> GetMaxADC(2, i));
-        hAsad[j] -> Fill(i + 68*3, (Double_t) ea[j] -> GetMaxADC(3, i));
+        hAsad[j] -> Fill(i, ea[j] -> GetADC(0, i, ea[j] -> GetMaxADCIdx(0, i)));
+        hAsad[j] -> Fill(i + 68, ea[j] -> GetADC(1, i, ea[j] -> GetMaxADCIdx(1, i)));
+        hAsad[j] -> Fill(i + 68*2, ea[j] -> GetADC(2, i, ea[j] -> GetMaxADCIdx(2, i)));
+        hAsad[j] -> Fill(i + 68*3, ea[j] -> GetADC(3, i, ea[j] -> GetMaxADCIdx(3, i)));
       }
     }
 
     cvs -> cd(j + 1);
     hAsad[j] -> Draw("colz");
-    hAsad[j] -> GetYaxis() -> SetRangeUser(0, 4096);
+//    hAsad[j] -> GetYaxis() -> SetRangeUser(0, 4096);
+    hAsad[j] -> GetYaxis() -> SetRangeUser(1500, 3100);
+
+    Double_t maskChannel[5] = {11, 22, 45, 56, 67};
+    for (Int_t iAget = 0; iAget < 4; iAget++) {
+      for (Int_t iMask = 0; iMask < 5; iMask++) {
+        box = new TBox(iAget*68 + maskChannel[iMask] - 0.5, 1500, iAget*68 + maskChannel[iMask] + 0.5, 3100);
+        box -> SetFillStyle(0);
+        box -> SetLineColor(1);
+        box -> Draw("same");
+      }
+    }
   }
 
-  cvs -> SaveAs(Form("%s.pdf", data.Data()));
+//  cvs -> SaveAs(Form("%s.pdf", data.Data()));
   cvs -> SaveAs(Form("%s.png", data.Data()));
-  cvs -> SaveAs(Form("%s.root", data.Data()));
+//  cvs -> SaveAs(Form("%s.root", data.Data()));
 
   if (cut != 0) {
     for (Int_t j = 0; j < numData; j++) {
@@ -152,8 +165,8 @@ void AmpVsCh(TString date, TString data, TString file0, TString file1, TString f
       hAsad[j] -> Draw("colz");
     }
 
-    cvs -> SaveAs(Form("%s_%d.pdf", data.Data(), cut));
+//    cvs -> SaveAs(Form("%s_%d.pdf", data.Data(), cut));
     cvs -> SaveAs(Form("%s_%d.png", data.Data(), cut));
-    cvs -> SaveAs(Form("%s_%d.root", data.Data(), cut));
+//    cvs -> SaveAs(Form("%s_%d.root", data.Data(), cut));
   }
 }

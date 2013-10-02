@@ -24,6 +24,7 @@
 
 #include "GETDecoder.hh"
 #include "GETFrame.hh"
+#include "GETPlot.hh"
 
 ClassImp(GETDecoder);
 
@@ -63,6 +64,8 @@ void GETDecoder::Initialize()
 
   fFrame = NULL;
   fCurrentFrameNo = -1;
+
+  fGETPlot = NULL;
 }
 
 void GETDecoder::SetDebugMode(Bool_t value)
@@ -160,6 +163,17 @@ Bool_t GETDecoder::IsNextFile()
   }
 
   return isNextFile;
+}
+
+GETPlot *GETDecoder::GetGETPlot()
+{
+  // Returns GETPlot object pointer if there exists.
+  // If not, create a new one and return it.
+
+  if (!fGETPlot)
+    fGETPlot = new GETPlot(this);
+
+  return fGETPlot;
 }
 
 Int_t GETDecoder::GetNumFrames()
@@ -296,6 +310,7 @@ GETFrame *GETDecoder::GetFrame(Int_t frameNo)
     fFrame -> SetEventID(eventIdx);
     fFrame -> SetCoboID(coboIdx);
     fFrame -> SetAsadID(asadIdx);
+    fFrame -> SetFrameNo(frameNo);
 
     fGraw.seekg((Int_t) fGraw.tellg() - 28 + headerSize);
 

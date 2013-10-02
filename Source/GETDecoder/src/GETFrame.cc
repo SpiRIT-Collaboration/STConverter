@@ -63,6 +63,13 @@ void GETFrame::SetAsadID(UShort_t value)
   fAsadIdx = value;
 }
 
+void GETFrame::SetFrameNo(Int_t value)
+{
+  // Sets the frame number.
+
+  fFrameNo = value;
+}
+
 void GETFrame::SetRawADC(UShort_t agetIdx, UShort_t chIdx, UShort_t buckIdx, UShort_t value)
 {
   // Sets the raw ADC value of the specific bucket of the channel, chIdx, in the AGET, agetIdx.
@@ -91,6 +98,13 @@ Int_t GETFrame::GetAsadID()
   // Returns the AsAd ID of this frame.
 
   return fAsadIdx;
+}
+
+Int_t GETFrame::GetFrameNo()
+{
+  // Returns the frame number of this frame.
+
+  return fFrameNo;
 }
 
 Int_t *GETFrame::GetRawADC(Int_t agetIdx, Int_t chIdx)

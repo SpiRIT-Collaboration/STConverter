@@ -23,6 +23,7 @@
 #include "TString.h"
 
 class GETFrame;
+class GETPlot;
 
 class GETDecoder : public TObject
 {
@@ -36,6 +37,7 @@ class GETDecoder : public TObject
     Bool_t SetGraw(const Char_t *filename);
 
     // getters
+    GETPlot *GetGETPlot();
     Int_t GetNumFrames();
     Int_t GetCurrentFrameNo();
     GETFrame *GetFrame();
@@ -59,6 +61,8 @@ class GETDecoder : public TObject
 
     GETFrame *fFrame;
     Int_t fCurrentFrameNo;
+
+    GETPlot *fGETPlot;
 
   ClassDef(GETDecoder, 1);
 };

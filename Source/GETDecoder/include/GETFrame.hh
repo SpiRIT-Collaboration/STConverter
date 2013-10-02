@@ -27,6 +27,7 @@ class GETFrame : public TObject
     void SetEventID(UInt_t value);
     void SetCoboID(UShort_t value);
     void SetAsadID(UShort_t value);
+    void SetFrameNo(Int_t value);
 
     void SetRawADC(UShort_t agetIdx, UShort_t chIdx, UShort_t buckIdx, UShort_t value);
 
@@ -34,6 +35,7 @@ class GETFrame : public TObject
     UInt_t GetEventID();
     Int_t GetCoboID();
     Int_t GetAsadID();
+    Int_t GetFrameNo();
 
     Int_t *GetRawADC(Int_t agetIdx, Int_t chIdx);
     Int_t GetRawADC(Int_t agetIdx, Int_t chIdx, Int_t buckIdx);
@@ -49,6 +51,7 @@ class GETFrame : public TObject
     UInt_t fEventIdx;
     Int_t fCoboIdx;
     Int_t fAsadIdx;
+    Int_t fFrameNo;
     Int_t fRawAdc[4*68*512];
 
     Bool_t fPedestalSubtracted;
