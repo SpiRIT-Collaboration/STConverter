@@ -19,8 +19,8 @@ FLAGS = -I./$(INCDIR) -I$(GETDecoderINCDIR)  $(ROOT_CFLAGS)
 LIBDEST = ../..
 
 $(LIBNAME).so: $(SOURCE:.cc=.o) $(DICT:.cc=.o)
-	$(CXX) --shared -fPIC -o $@ $(ROOT_LIBS) $^ $(GETDecoderDIR)/libGETDecoderDict.o $(GETDecoderDIR)/src/GETDecoder.o $(GETDecoderDIR)/src/GETFrame.o 
-#	$(CXX) --shared -fPIC -o $@ $(ROOT_LIBS) $^ -L$(GETDecoderDIR) -lGETDecoder
+	$(CXX) --shared -fPIC -o $@ $(ROOT_LIBS) $^ -L$(GETDecoderDIR) -lGETDecoder
+#	$(CXX) --shared -fPIC -o $@ $(ROOT_LIBS) $^ $(GETDecoderDIR)/libGETDecoderDict.o $(GETDecoderDIR)/src/GETDecoder.o $(GETDecoderDIR)/src/GETFrame.o 
 	@ln -sf $(shell pwd)/$(LIBNAME).so $(LIBDEST)
 	@ln -sf $(shell pwd)/mapping/ChToPad.map $(LIBDEST)
 	@ln -sf $(shell pwd)/mapping/UnitAsAd.map $(LIBDEST)

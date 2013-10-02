@@ -117,7 +117,7 @@ STRawEvent *STCore::GetRawEvent()
         if (row == -2 || layer == -2)
           continue;
 
-        Int_t *adc = frame -> GetADC(iAget, iCh);
+        Int_t *adc = frame -> GetRawADC(iAget, iCh);
         STPad *pad = new STPad(row, layer);
         for (Int_t iTb = 0; iTb < 512; iTb++)
           pad -> SetADC(iTb, adc[iTb]);

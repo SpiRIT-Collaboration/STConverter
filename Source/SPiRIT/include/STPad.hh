@@ -22,27 +22,39 @@ class STPad : public TObject
     ~STPad();
 
     void Initialize();
-    void Process();
 
     // setters
     void SetLayer(Int_t val);
     void SetRow(Int_t val);
+
+    void SetRawADC(Int_t *val);
+    void SetRawADC(Int_t idx, Int_t val);
+    void SetMaxADCIdx(Int_t val);
+    
+    void SetPedestalSubtracted(Bool_t val);
     void SetADC(Double_t *val);
     void SetADC(Int_t idx, Double_t val);
 
     // getters
     Int_t GetLayer();
     Int_t GetRow();
+
+    Int_t *GetRawADC();
+    Int_t GetRawADC(Int_t idx);
+    Int_t GetMaxADCIdx();
+
     Double_t *GetADC();
     Double_t GetADC(Int_t idx);
-    Int_t GetMaxADCIdx();
 
   private:
     Int_t fLayer;
     Int_t fRow;  
 
-    Int_t fMaxADCIdx;
-    Double_t fADC[512];
+    Int_t fRawAdc[512];
+    Int_t fMaxAdcIdx;
+
+    Bool_t fPedestalSubtracted;
+    Double_t fAdc[512];
 
   ClassDef(STPad, 1);
 };
