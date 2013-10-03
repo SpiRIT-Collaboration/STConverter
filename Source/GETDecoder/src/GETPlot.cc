@@ -56,7 +56,7 @@ void GETPlot::Initialize()
   // Initializes variables
 
   minTb = 0;
-  maxTb = 276;
+  maxTb = 512;
 
   SetAgetRange(-1, -1, minTb - 1, maxTb + 1, -10, 4106);
 
@@ -381,7 +381,7 @@ TCanvas *GETPlot::ShowAverage(Int_t numChannels, Int_t *chList, Int_t frameNo)
   //     frameNo: frame number that will be drawn.
   //              If -1, the method automatically load the next frame.
   //
-  // example)
+  // example) See ShowRawFrame() method
 
   if (fDecoder == NULL) {
     std::cout << "== GETDecoder is not set!" << std::endl;
@@ -447,11 +447,20 @@ TCanvas *GETPlot::ShowAverage(Int_t numChannels, Int_t *chList, Int_t frameNo)
     for (Int_t iTb = 0; iTb < 512; iTb++) 
       charge[iTb] /= (Double_t) divider;
 
+    Double_t min = 5000;
+    Double_t max = -1000;
+    for (Int_t iTb = 0; iTb < 512; iTb++) {
+      if (charge[iTb] < min) min = charge[iTb];
+      if (charge[iTb] > max) max = charge[iTb];
+    }
+
     fGraph -> SetMarkerColor(2);
     fGraph -> SetLineColor(2);
     fGraph -> SetMarkerStyle(2);
     fGraph -> SetMarkerSize(0.3);
     cvs -> cd(iAget + 1);
+    TGraph *graph = (TGraph *) cvs -> FindObject(Form("type3AGET%d", iAget));
+    graph -> GetYaxis() -> SetRangeUser(min, max);
     fGraph -> DrawGraph(512, tb, charge, "PL same");
   }
 
@@ -537,6 +546,7 @@ void GETPlot::ResetGraph(Int_t type, Bool_t first)
     }
 
     fAget[iAget] -> SetTitle(Form("AGET %d", iAget));
+    fAget[iAget] -> SetName(Form("type%dAGET%d", type, iAget));
     fAget[iAget] -> SetMarkerStyle(2);
     fAget[iAget] -> SetPoint(0, -100, -100);
 
