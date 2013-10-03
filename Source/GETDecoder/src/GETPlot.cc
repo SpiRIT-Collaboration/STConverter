@@ -460,7 +460,7 @@ TCanvas *GETPlot::ShowAverage(Int_t numChannels, Int_t *chList, Int_t frameNo)
     fGraph -> SetMarkerSize(0.3);
     cvs -> cd(iAget + 1);
     TGraph *graph = (TGraph *) cvs -> FindObject(Form("type3AGET%d", iAget));
-    graph -> GetYaxis() -> SetRangeUser(min, max);
+    graph -> GetYaxis() -> SetRangeUser(min - 10, max + 10);
     fGraph -> DrawGraph(512, tb, charge, "PL same");
   }
 
