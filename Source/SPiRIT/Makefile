@@ -1,6 +1,16 @@
 ROOT_CFLAGS = $(shell root-config --cflags)
 ROOT_LIBS = $(shell root-config --libs)
-CXX = g++
+UNAME = $(shell uname)
+ifeq ($(UNAME),Linux)
+  CXX = g++
+endif
+ifeq ($(UNAME),Darwin)
+  ifeq ($(shell uname -r),13.0.0)
+    CXX = g++ -stdlib=libstdc++
+  else
+    CXX = g++
+  endif
+endif
 
 PREFIX = ST
 SRCDIR = src
