@@ -17,10 +17,11 @@ SRCDIR = src
 INCDIR = include
 TARGET = GETDecoder
 LIBDEST = ../..
+CONFIG = GETConfig.hh
 
 LIBNAME = lib$(TARGET)
 SOURCE = $(wildcard $(SRCDIR)/$(PREFIX)*.cc)
-HEADER = $(wildcard $(INCDIR)/$(PREFIX)*.hh)
+HEADER = $(filter-out %$(CONFIG), $(wildcard $(INCDIR)/$(PREFIX)*.hh))
 DICT = $(LIBNAME)Dict.cc
 LINKDEF = $(LIBNAME)LinkDef.hh
 FLAGS = -I./$(INCDIR) $(ROOT_CFLAGS)
@@ -36,7 +37,7 @@ $(DICT): $(HEADER) $(LINKDEF)
 $(LINKDEF):
 	@echo "" > LinkdefSpace
 	@echo "#ifdef __CINT__" > LinkdefHeader
-	@$(shell ls $(INCDIR) | grep ^$(PREFIX) | grep hh | awk -F. {'printf("#pragma link C++ class %s+;\n", $$1)'} > LinkdefBody)
+	@$(shell ls $(INCDIR) | grep ^$(PREFIX) | grep hh | awk -F. {'if ($$1 != "GETConfig") printf("#pragma link C++ class %s+;\n", $$1)'} > LinkdefBody)
 	@echo "#endif" > LinkdefFooter
 	@cat LinkdefHeader LinkdefSpace LinkdefBody LinkdefSpace LinkdefFooter > $@
 	@rm -rf LinkdefSpace LinkdefHeader LinkdefBody LinkdefFooter
