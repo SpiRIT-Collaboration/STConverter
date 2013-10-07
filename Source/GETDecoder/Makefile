@@ -25,6 +25,7 @@ FLAGS = -I./$(INCDIR) $(ROOT_CFLAGS)
 $(LIBNAME).so: $(SOURCE:.cc=.o) $(DICT:.cc=.o)
 	$(CXX) --shared -fPIC -o $@ $(ROOT_LIBS) $^
 	@ln -sf $(shell pwd)/$(LIBNAME).so $(LIBDEST)
+	@cp -r examples ../../GETDecoder_examples
 
 $(DICT): $(HEADER) $(LINKDEF)
 	rootcint -f $@ -c $^
