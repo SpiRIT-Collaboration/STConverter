@@ -22,9 +22,6 @@
 #include "TObjString.h"
 #include "TString.h"
 
-#include "GETConfig.hh"
-extern const Int_t NUMTBS;
-
 #include "GETDecoder.hh"
 #include "GETFrame.hh"
 #include "GETPlot.hh"
@@ -66,7 +63,7 @@ void GETDecoder::Initialize()
   fNextGraw = "";
 
   fFrame = NULL;
-  fCurrentFrameNo = -1;
+  fCurrentFrameID = -1;
 
   fGETPlot = NULL;
 }
@@ -186,11 +183,11 @@ Int_t GETDecoder::GetNumFrames()
   return fNumFrames;
 }
 
-Int_t GETDecoder::GetCurrentFrameNo()
+Int_t GETDecoder::GetCurrentFrameID()
 {
   // Returns the frame number currently read and returned frame.
 
-  return fCurrentFrameNo;
+  return fCurrentFrameID;
 }
 
 void GETDecoder::CountFrames()
@@ -226,14 +223,14 @@ GETFrame *GETDecoder::GetFrame()
 {
   // Returns next frame.
 
-  return GetFrame(fCurrentFrameNo + 1);
+  return GetFrame(fCurrentFrameID + 1);
 }
 
 GETFrame *GETDecoder::GetFrame(Int_t frameNo)
 {
   // Returns specific frame of given frame number.
 
-  if (fCurrentFrameNo == frameNo) {
+  if (fCurrentFrameID == frameNo) {
     if (fDebugMode)
       PrintFrameInfo(frameNo, fFrame -> GetEventID(), fFrame -> GetCoboID(), fFrame -> GetAsadID());
 
@@ -257,9 +254,9 @@ GETFrame *GETDecoder::GetFrame(Int_t frameNo)
     UShort_t coboIdx;
     UShort_t asadIdx;
 
-    while (frameNo > fCurrentFrameNo + 1) {
+    while (frameNo > fCurrentFrameID + 1) {
       if (fDebugMode)
-        std::cout << "== Skipping Frame No. " << fCurrentFrameNo + 1 << std::endl;
+        std::cout << "== Skipping Frame No. " << fCurrentFrameID + 1 << std::endl;
 
       fGraw.ignore(1);
       fGraw.read(reinterpret_cast<Char_t *>(&frameSize), 3);
@@ -267,12 +264,12 @@ GETFrame *GETDecoder::GetFrame(Int_t frameNo)
       frameSize = (htonl(frameSize) >> 8)*64;
 
       fGraw.seekg((Int_t)fGraw.tellg() - 4 + frameSize);
-      fCurrentFrameNo++;
+      fCurrentFrameID++;
     }
 
-    if (frameNo < fCurrentFrameNo) {
+    if (frameNo < fCurrentFrameID) {
       SetFile(fFirstGraw.Data());
-      fCurrentFrameNo = -1;
+      fCurrentFrameID = -1;
 
       return GetFrame(frameNo);
     }
@@ -313,7 +310,7 @@ GETFrame *GETDecoder::GetFrame(Int_t frameNo)
     fFrame -> SetEventID(eventIdx);
     fFrame -> SetCoboID(coboIdx);
     fFrame -> SetAsadID(asadIdx);
-    fFrame -> SetFrameNo(frameNo);
+    fFrame -> SetFrameID(frameNo);
 
     fGraw.seekg((Int_t) fGraw.tellg() - 28 + headerSize);
 
@@ -327,13 +324,13 @@ GETFrame *GETDecoder::GetFrame(Int_t frameNo)
       UShort_t buckIdx = ((data & 0x007fc000) >> 14);
       UShort_t sample = (data & 0x00000fff);         
 
-      if (chanIdx >= 68 || agetIdx >= 4 || buckIdx >= NUMTBS)
+      if (chanIdx >= 68 || agetIdx >= 4 || buckIdx >= GETNumTbs)
         continue; 
                                                                      
       fFrame -> SetRawADC(agetIdx, chanIdx, buckIdx, sample); 
     }
 
-    fCurrentFrameNo = frameNo;
+    fCurrentFrameID = frameNo;
 
     return fFrame;
   }

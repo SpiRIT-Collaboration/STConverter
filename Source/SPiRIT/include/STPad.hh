@@ -11,6 +11,11 @@
 #ifndef STPAD_H
 #define STPAD_H
 
+#include "GETConfig.hh"
+#ifdef __CINT__
+extern const Int_t GETNumTbs;
+#endif
+
 #include "TROOT.h"
 #include "TObject.h"
 
@@ -50,11 +55,11 @@ class STPad : public TObject
     Int_t fLayer;
     Int_t fRow;  
 
-    Int_t fRawAdc[512];
+    Int_t fRawAdc[GETNumTbs];
     Int_t fMaxAdcIdx;
 
     Bool_t fPedestalSubtracted;
-    Double_t fAdc[512];
+    Double_t fAdc[GETNumTbs];
 
   ClassDef(STPad, 1);
 };

@@ -36,7 +36,7 @@ void STPad::Initialize()
  fPedestalSubtracted = 0;
  fMaxAdcIdx = 0;
 
- for (Int_t i = 0; i < 512; i++) {
+ for (Int_t i = 0; i < GETNumTbs; i++) {
    fRawAdc[i] = 0;
    fAdc[i] = 0;
  }
@@ -58,7 +58,7 @@ void STPad::SetRow(Int_t val)
 
 void STPad::SetRawADC(Int_t *val)
 {
-  for (Int_t i = 0; i < 512; i++)
+  for (Int_t i = 0; i < GETNumTbs; i++)
     fRawAdc[i] = val[i];
 }
 
@@ -79,7 +79,7 @@ void STPad::SetMaxADCIdx(Int_t val)
 
 void STPad::SetADC(Double_t *val)
 {
-  for (Int_t i = 0; i < 512; i++)
+  for (Int_t i = 0; i < GETNumTbs; i++)
     fAdc[i] = val[i];
 }
 

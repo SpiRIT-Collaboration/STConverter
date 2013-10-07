@@ -15,10 +15,12 @@
 #ifndef _GETFRAME_H_
 #define _GETFRAME_H_
 
-#include "TObject.h"
-
 #include "GETConfig.hh"
-extern const Int_t NUMTBS;
+#ifdef __CINT__
+extern const Int_t GETNumTbs;
+#endif
+
+#include "TObject.h"
 
 class GETFrame : public TObject
 {
@@ -30,7 +32,7 @@ class GETFrame : public TObject
     void SetEventID(UInt_t value);
     void SetCoboID(UShort_t value);
     void SetAsadID(UShort_t value);
-    void SetFrameNo(Int_t value);
+    void SetFrameID(Int_t value);
 
     void SetRawADC(UShort_t agetIdx, UShort_t chIdx, UShort_t buckIdx, UShort_t value);
 
@@ -38,7 +40,7 @@ class GETFrame : public TObject
     UInt_t GetEventID();
     Int_t GetCoboID();
     Int_t GetAsadID();
-    Int_t GetFrameNo();
+    Int_t GetFrameID();
 
     Int_t *GetRawADC(Int_t agetIdx, Int_t chIdx);
     Int_t GetRawADC(Int_t agetIdx, Int_t chIdx, Int_t buckIdx);
@@ -54,12 +56,12 @@ class GETFrame : public TObject
     UInt_t fEventIdx;
     Int_t fCoboIdx;
     Int_t fAsadIdx;
-    Int_t fFrameNo;
-    Int_t fRawAdc[4*68*NUMTBS];
+    Int_t fFrameIdx;
+    Int_t fRawAdc[4*68*GETNumTbs];
 
     Bool_t fPedestalSubtracted;
     Int_t fMaxAdcIdx[4*68];
-    Double_t fAdc[4*68*NUMTBS];
+    Double_t fAdc[4*68*GETNumTbs];
 
   ClassDef(GETFrame, 1);
 };

@@ -35,7 +35,6 @@ STCore::STCore(Char_t *filename)
 
 STCore::~STCore()
 {
-  delete fFramePtr;
   delete fDecoderPtr;
   
   delete fPedestalPtr;
@@ -50,12 +49,18 @@ void STCore::Initialize()
   fPedestalPtr = new STPedestal();
 
   fDecoderPtr = new GETDecoder();
-  fDecoderPtr -> SetDebugMode(1);
-  fFramePtr = new GETFrame();
+//  fDecoderPtr -> SetDebugMode(1);
 
   fIsGraw = 0;
   fIsPedestalData = 0;
-  fStoppedFrameNo = 0;
+  fIsInternalPedestal = 0;
+
+  fStartTb = 0;
+  fNumTbs = 0;
+
+  fPrevEventNo = -1;
+  fCurrEventNo = -1;
+  fCurrFrameNo = 0;
 }
 
 void STCore::SetGraw(Char_t *filename)
@@ -63,12 +68,26 @@ void STCore::SetGraw(Char_t *filename)
   fIsGraw = fDecoderPtr -> SetGraw(filename);
 }
 
+void STCore::SetInternalPedestal(Int_t startTb, Int_t numTbs)
+{
+  fIsInternalPedestal = 1;
+  fIsPedestalData = 0;
+
+  fStartTb = startTb;
+  fNumTbs = numTbs;
+}
+
 void STCore::SetPedestalData(Char_t *filename)
 {
   fIsPedestalData = fPedestalPtr -> SetPedestalData(filename);
+
+  if (fIsPedestalData)
+    fIsInternalPedestal = 0;
+  else
+    std::cout << "== Pedestal data is not set! Check it exists!" << std::endl;
 }
 
-STRawEvent *STCore::GetRawEvent()
+STRawEvent *STCore::GetRawEvent(Int_t eventID)
 {
   if (!fIsGraw) {
     std::cout << "== Graw file is not set!" << std::endl;
@@ -76,38 +95,42 @@ STRawEvent *STCore::GetRawEvent()
     return NULL;
   }
 
-  if (!fIsPedestalData) {
+  if (!fIsPedestalData && !fIsInternalPedestal) {
     std::cout << "== Pedestal data file is not set!" << std::endl;
   }
+
+  fPrevEventNo = eventID;
 
   if (fRawEventPtr != NULL)
     delete fRawEventPtr;
 
   fRawEventPtr = new STRawEvent();
 
-  Int_t prevEventNo = -1;
-  Int_t currentEventNo = -1;
-  Int_t numFrames = fDecoderPtr -> GetNumFrames();
-  for (Int_t iFrame = fStoppedFrameNo; iFrame < numFrames; iFrame++) {
-    GETFrame *frame = fDecoderPtr -> GetFrame(iFrame);
+  GETFrame *frame = NULL;
+  while ((frame = fDecoderPtr -> GetFrame(fCurrFrameNo))) {
+    if (fPrevEventNo == -1)
+      fPrevEventNo = frame -> GetEventID();
 
-    if (prevEventNo == -1) {
-      prevEventNo = frame -> GetEventID();
-      currentEventNo = prevEventNo;
-    }
+    fCurrEventNo = frame -> GetEventID();
 
-    currentEventNo = frame -> GetEventID();
-
-    if (currentEventNo != prevEventNo) {
-      fStoppedFrameNo = iFrame;
-
+    if (fCurrEventNo == fPrevEventNo + 1) {
+      fPrevEventNo = fCurrEventNo;
       return fRawEventPtr;
+    } else if (fCurrEventNo > fPrevEventNo + 1) {
+      fCurrFrameNo = 0;
+      continue;
+    } else if (fCurrEventNo < fPrevEventNo) {
+      fCurrFrameNo++;
+      continue;
     }
 
-    fRawEventPtr -> SetEventID(currentEventNo);
+    fRawEventPtr -> SetEventID(fCurrEventNo);
 
     Int_t coboID = frame -> GetCoboID();
     Int_t asadID = frame -> GetAsadID();
+
+    if (fIsInternalPedestal)
+      frame -> CalcPedestal(fStartTb, fNumTbs);
 
     for (Int_t iAget = 0; iAget < 4; iAget++) {
       for (Int_t iCh = 0; iCh < 68; iCh++) {
@@ -117,20 +140,27 @@ STRawEvent *STCore::GetRawEvent()
         if (row == -2 || layer == -2)
           continue;
 
-        Int_t *adc = frame -> GetRawADC(iAget, iCh);
         STPad *pad = new STPad(row, layer);
-        for (Int_t iTb = 0; iTb < 512; iTb++)
-          pad -> SetADC(iTb, adc[iTb]);
+        Int_t *rawadc = frame -> GetRawADC(iAget, iCh);
+        for (Int_t iTb = 0; iTb < GETNumTbs; iTb++)
+          pad -> SetRawADC(iTb, rawadc[iTb]);
+
+        if (fIsInternalPedestal) {
+          Double_t *adc = frame -> GetADC(iAget, iCh);
+          for (Int_t iTb = 0; iTb < GETNumTbs; iTb++)
+            pad -> SetADC(iTb, adc[iTb]);
+
+          pad -> SetMaxADCIdx(frame -> GetMaxADCIdx(iAget, iCh));
+        } else if (fIsPedestalData) {
+          // Code using pedestal data file will be set here.
+        }
 
         fRawEventPtr -> SetPad(pad);
       }
     }
+
+    fCurrFrameNo++;
   }
 
-  return NULL;
-}
-
-STRawEvent *STCore::GetRawEvent(Int_t eventID)
-{
   return NULL;
 }

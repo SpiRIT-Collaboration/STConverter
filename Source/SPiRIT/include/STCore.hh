@@ -11,6 +11,8 @@
 #ifndef _STCORE_H_
 #define _STCORE_H_
 
+#include "GETConfig.hh"
+
 #include "TObject.h"
 
 class STRawEvent;
@@ -29,24 +31,30 @@ class STCore : public TObject {
 
     // setters
     void SetGraw(Char_t *filename);
+    void SetInternalPedestal(Int_t startTb = 10, Int_t numTbs = 20);
     void SetPedestalData(Char_t *filename);
 
     // getters
-    STRawEvent *GetRawEvent();
-    STRawEvent *GetRawEvent(Int_t eventID);
+    STRawEvent *GetRawEvent(Int_t eventID = -1);
 
   private:
-    Int_t fStoppedFrameNo;
-
-    STRawEvent *fRawEventPtr;
     STMap *fMapPtr;
-    STPedestal *fPedestalPtr;
 
     GETDecoder *fDecoderPtr;
-    GETFrame *fFramePtr;
-
     Bool_t fIsGraw;
+
+    STPedestal *fPedestalPtr;
+    Bool_t fIsInternalPedestal;
     Bool_t fIsPedestalData;
+    Int_t fStartTb;
+    Int_t fNumTbs;
+
+    STRawEvent *fRawEventPtr;
+
+    UInt_t fPrevEventNo;
+    UInt_t fCurrEventNo;
+
+    Int_t fCurrFrameNo;
 
   ClassDef(STCore, 1);
 };

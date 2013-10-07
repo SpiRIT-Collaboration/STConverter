@@ -15,6 +15,8 @@
 #ifndef _GETPLOT_H_
 #define _GETPLOT_H_
 
+#include "GETConfig.hh"
+
 #include "TObject.h"
 
 class GETDecoder;

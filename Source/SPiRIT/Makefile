@@ -1,15 +1,11 @@
 ROOT_CFLAGS = $(shell root-config --cflags)
 ROOT_LIBS = $(shell root-config --libs)
-UNAME = $(shell uname)
-ifeq ($(UNAME),Linux)
+UNAME = $(shell uname -rs | cut -d. -f 1)
+MAVERICKS = Darwin 13
+ifeq ($(UNAME), $(MAVERICKS))
+  CXX = g++ -stdlib=libstdc++
+else
   CXX = g++
-endif
-ifeq ($(UNAME),Darwin)
-  ifeq ($(shell uname -r),13.0.0)
-    CXX = g++ -stdlib=libstdc++
-  else
-    CXX = g++
-  endif
 endif
 
 PREFIX = ST

@@ -18,6 +18,8 @@
 
 #include <fstream>
 
+#include "GETConfig.hh"
+
 #include "TObject.h"
 #include "TROOT.h"
 #include "TString.h"
@@ -39,15 +41,15 @@ class GETDecoder : public TObject
     // getters
     GETPlot *GetGETPlot();
     Int_t GetNumFrames();
-    Int_t GetCurrentFrameNo();
+    Int_t GetCurrentFrameID();
     GETFrame *GetFrame();
-    GETFrame *GetFrame(Int_t frameNo);
+    GETFrame *GetFrame(Int_t frameIdx);
 
   private:
     void Initialize();
 
     Bool_t fDebugMode;
-    void PrintFrameInfo(Int_t frameNo, Int_t eventID, Int_t coboID, Int_t asadID);
+    void PrintFrameInfo(Int_t frameID, Int_t eventID, Int_t coboID, Int_t asadID);
 
     Bool_t SetFile(const Char_t *filename);
     void CountFrames();
@@ -60,7 +62,7 @@ class GETDecoder : public TObject
     TString fNextGraw;
 
     GETFrame *fFrame;
-    Int_t fCurrentFrameNo;
+    Int_t fCurrentFrameID;
 
     GETPlot *fGETPlot;
 
