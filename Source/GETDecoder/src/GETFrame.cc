@@ -15,6 +15,9 @@
 #include <iostream>
 #include <cmath>
 
+#include "GETConfig.hh"
+extern const Int_t NUMTBS;
+
 #include "GETFrame.hh"
 
 ClassImp(GETFrame);
@@ -30,9 +33,9 @@ GETFrame::GETFrame()
 
   fPedestalSubtracted = 0;
 
-  for (Int_t i = 0; i < 4*68*512; i++) {
+  for (Int_t i = 0; i < 4*68*NUMTBS; i++) {
     fRawAdc[i] = 0;
-    fMaxAdcIdx[i%512] = 0;
+    fMaxAdcIdx[i%NUMTBS] = 0;
     fAdc[i] = 0;
   }
 }
@@ -151,15 +154,15 @@ void GETFrame::CalcPedestal(Int_t startTb, Int_t numTbs)
       pedestal[1] = sqrt(pedestal[1]);
 
       index = GetIndex(iAget, iCh, 0);
-      for (Int_t iTb = 0; iTb < 512; iTb++) {
+      for (Int_t iTb = 0; iTb < NUMTBS; iTb++) {
 //        Double_t adc = pedestal[0] - 5*pedestal[1] - fRawAdc[index + iTb];
         Double_t adc = pedestal[0] - fRawAdc[index + iTb];
         fAdc[index + iTb] = (adc < 0 || fRawAdc[index + iTb] == 0 ? 0 : adc);
 
         // Discard the first and the last bins
-        if (iTb > 0 && iTb < 511) {
-          if (fAdc[index + iTb] > fAdc[index + fMaxAdcIdx[index/512]])
-            fMaxAdcIdx[index/512] = iTb;
+        if (iTb > 0 && iTb < NUMTBS - 1) {
+          if (fAdc[index + iTb] > fAdc[index + fMaxAdcIdx[index/NUMTBS]])
+            fMaxAdcIdx[index/NUMTBS] = iTb;
         }
       }
     }
@@ -179,7 +182,7 @@ Int_t GETFrame::GetMaxADCIdx(Int_t agetIdx, Int_t chIdx)
     return -1;
   }
 
-  Int_t index = GetIndex(agetIdx, chIdx, 0)/512;
+  Int_t index = GetIndex(agetIdx, chIdx, 0)/NUMTBS;
 
   return fMaxAdcIdx[index];
 }
@@ -220,5 +223,5 @@ Int_t GETFrame::GetIndex(Int_t agetIdx, Int_t chIdx, Int_t buckIdx)
 {
   // Internally used method to get the index of the array.
 
-  return agetIdx*68*512 + chIdx*512 + buckIdx;
+  return agetIdx*68*NUMTBS + chIdx*NUMTBS + buckIdx;
 }

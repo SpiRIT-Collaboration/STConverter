@@ -17,6 +17,9 @@
 
 #include "TObject.h"
 
+#include "GETConfig.hh"
+extern const Int_t NUMTBS;
+
 class GETFrame : public TObject
 {
   public:
@@ -52,11 +55,11 @@ class GETFrame : public TObject
     Int_t fCoboIdx;
     Int_t fAsadIdx;
     Int_t fFrameNo;
-    Int_t fRawAdc[4*68*512];
+    Int_t fRawAdc[4*68*NUMTBS];
 
     Bool_t fPedestalSubtracted;
     Int_t fMaxAdcIdx[4*68];
-    Double_t fAdc[4*68*512];
+    Double_t fAdc[4*68*NUMTBS];
 
   ClassDef(GETFrame, 1);
 };

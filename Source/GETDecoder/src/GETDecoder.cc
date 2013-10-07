@@ -22,6 +22,9 @@
 #include "TObjString.h"
 #include "TString.h"
 
+#include "GETConfig.hh"
+extern const Int_t NUMTBS;
+
 #include "GETDecoder.hh"
 #include "GETFrame.hh"
 #include "GETPlot.hh"
@@ -324,7 +327,7 @@ GETFrame *GETDecoder::GetFrame(Int_t frameNo)
       UShort_t buckIdx = ((data & 0x007fc000) >> 14);
       UShort_t sample = (data & 0x00000fff);         
 
-      if (chanIdx >= 68 || agetIdx >= 4 || buckIdx >= 512)
+      if (chanIdx >= 68 || agetIdx >= 4 || buckIdx >= NUMTBS)
         continue; 
                                                                      
       fFrame -> SetRawADC(agetIdx, chanIdx, buckIdx, sample); 
