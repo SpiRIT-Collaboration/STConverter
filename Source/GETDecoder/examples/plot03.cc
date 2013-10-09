@@ -1,5 +1,10 @@
-void plot03() {
-  gSystem -> Load("libGETDecoder");
+void plot03(Char_t *filename) {
+  if (filename == "") {
+    cout << "Run 'root \'plot03.cc(\"/path/to/GRAWFILE.graw\")\'" << endl;
+    return;
+  }
+
+  gSystem -> Load("../libGETDecoder.so");
 
   GETDecoder *decoder = new GETDecoder("GRAWFILE.graw");
   GETPlot *plot = decoder -> GetGETPlot();
@@ -34,5 +39,5 @@ void plot03() {
   // TCanvas *cvs = plot -> ShowFrame(2, 10, 20, -5, list);
   TCanvas *cvs = plot -> ShowFrame();
 
-  cvs -> SaveAs(Form("CoBo%d-AsAd%d-RawFrame%d.png", coboID, asadId, frameID));
+  cvs -> SaveAs(Form("CoBo%d-AsAd%d-RawFrame%d.png", coboID, asadID, frameID));
 }

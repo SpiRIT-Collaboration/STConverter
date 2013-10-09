@@ -1,5 +1,5 @@
 void readFrame02() {
-  gSystem -> Load("libGETDecoder");
+  gSystem -> Load("../libGETDecoder.so");
 
   GETDecoder *decoder = new GETDecoder("GRAWFILE.graw");
   

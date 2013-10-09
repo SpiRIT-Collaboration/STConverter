@@ -1,5 +1,10 @@
-void plot03() {
-  gSystem -> Load("libGETDecoder");
+void plot03(Char_t *filename) {
+  if (filename == "") {
+    cout << "Run 'root \'plot04.cc(\"/path/to/GRAWFILE.graw\")\'" << endl;
+    return;
+  }
+
+  gSystem -> Load("../libGETDecoder.so");
 
   GETDecoder *decoder = new GETDecoder("GRAWFILE.graw");
   GETPlot *plot = decoder -> GetGETPlot();
@@ -19,5 +24,5 @@ void plot03() {
   Int_t list[5] = {11, 22, 45, 56, 67};
   TCanvas *cvs = plot -> ShowAverage(-5, list);
 
-  cvs -> SaveAs(Form("CoBo%d-AsAd%d-RawFrame%d.png", coboID, asadId, frameID));
+  cvs -> SaveAs(Form("CoBo%d-AsAd%d-RawFrame%d.png", coboID, asadID, frameID));
 }
