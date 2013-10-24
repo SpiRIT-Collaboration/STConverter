@@ -1,0 +1,9 @@
+##############
+# Important! #
+##############
+
+Change the number of time bucket in
+
+  Source/GETDecoder/include/GETConfig.hh
+
+before compiling the package!

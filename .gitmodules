@@ -1,3 +1,3 @@
 [submodule "Source/GETDecoder"]
+	url = https://geniejhang@bitbucket.org/geniejhang/getdecoder.git
 	path = Source/GETDecoder
-	url = git@gitlab.com:geniejhang/GETDecoder.git
