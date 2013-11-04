@@ -1,12 +1,6 @@
 ROOT_CFLAGS = $(shell root-config --cflags)
 ROOT_LIBS = $(shell root-config --libs)
-UNAME = $(shell uname -rs | cut -d. -f 1)
-MAVERICKS = Darwin 13
-ifeq ($(UNAME), $(MAVERICKS))
-  CXX = g++ -stdlib=libstdc++
-else
-  CXX = g++
-endif
+CXX = g++
 
 PREFIX = ST
 SRCDIR = src
