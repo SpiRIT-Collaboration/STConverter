@@ -115,7 +115,7 @@ Double_t *STPad::GetADC()
   if (!fPedestalSubtracted) {
     std::cout << "== Pedestal subtraction is not done!" << std::endl;
 
-    return -1;
+    return 0;
   }
 
   return fAdc;
@@ -126,7 +126,7 @@ Double_t STPad::GetADC(Int_t idx)
   if (!fPedestalSubtracted) {
     std::cout << "== Pedestal subtraction is not done!" << std::endl;
 
-    return -1;
+    return -4;
   }
 
   return fAdc[idx];

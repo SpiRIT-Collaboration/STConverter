@@ -26,6 +26,7 @@ class STHit : public TObject {
     ~STHit();
 
     //!< Hit setter
+    void SetHit(TVector3 vec, Double_t charge);
     void SetHit(Double_t x, Double_t y, Double_t z, Double_t charge);
     //!< Position setter
     void SetPosition(TVector3 vec);

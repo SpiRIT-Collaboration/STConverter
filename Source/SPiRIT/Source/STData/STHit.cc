@@ -19,13 +19,13 @@ STHit::STHit()
 STHit::~STHit()
 {}
 
-void STHit::SetHit(TVector3 vec, Double_t charge);
+void STHit::SetHit(TVector3 vec, Double_t charge)
 {
   fPosition = vec;
   fCharge = charge;
 }
 
-void STHit::SetHit(Double_t x, Double_t y, Double_t z, Double_t charge);
+void STHit::SetHit(Double_t x, Double_t y, Double_t z, Double_t charge)
 {
   fPosition = TVector3(x, y, z);
   fCharge = charge;
