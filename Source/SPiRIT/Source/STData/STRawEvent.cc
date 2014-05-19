@@ -21,8 +21,7 @@ STRawEvent::STRawEvent()
   fEventID = -1;
   fNumPads = 0;
 
-  for (Int_t iPad = 0; iPad < 12096; iPad++)
-    fPadsArray[iPad] = 0;
+  memset(fPadsArray, 0, sizeof(fPadsArray));
 }
 
 STRawEvent::~STRawEvent()
@@ -66,7 +65,7 @@ Int_t STRawEvent::GetNumPads()
 
 STPad *STRawEvent::GetPad(Int_t padNo)
 {
-  return (padNo < fNumPads ? fPadsArray[padNo] : NULL);
+  return (padNo < fNumPads ? fPadsArray[padNo] : 0);
 }
 
 STPad *STRawEvent::GetPad(Int_t row, Int_t layer)
@@ -79,5 +78,5 @@ STPad *STRawEvent::GetPad(Int_t row, Int_t layer)
       return fPadsArray[iPad];
   }
 
-  return NULL;
+  return 0;
 }

@@ -1,5 +1,5 @@
 // =================================================
-//  STEvent Class
+//  STPad Class
 //
 //  Description:
 //    Container for a pad data
@@ -36,10 +36,8 @@ void STPad::Initialize()
  fPedestalSubtracted = 0;
  fMaxAdcIdx = 0;
 
- for (Int_t i = 0; i < GETNumTbs; i++) {
-   fRawAdc[i] = 0;
-   fAdc[i] = 0;
- }
+ memset(fRawAdc, 0, sizeof(fRawAdc));
+ memset(fAdc, 0, sizeof(fAdc));
 
  fRow = -1;
  fLayer = -1;
@@ -58,8 +56,7 @@ void STPad::SetRow(Int_t val)
 
 void STPad::SetRawADC(Int_t *val)
 {
-  for (Int_t i = 0; i < GETNumTbs; i++)
-    fRawAdc[i] = val[i];
+  memcpy(val, fRawAdc, sizeof(val));
 }
 
 void STPad::SetRawADC(Int_t idx, Int_t val)
@@ -79,8 +76,7 @@ void STPad::SetMaxADCIdx(Int_t val)
 
 void STPad::SetADC(Double_t *val)
 {
-  for (Int_t i = 0; i < GETNumTbs; i++)
-    fAdc[i] = val[i];
+  memcpy(fAdc, val, sizeof(val));
 }
 
 void STPad::SetADC(Int_t idx, Double_t val)
@@ -119,7 +115,7 @@ Double_t *STPad::GetADC()
   if (!fPedestalSubtracted) {
     std::cout << "== Pedestal subtraction is not done!" << std::endl;
 
-    return NULL;
+    return -1;
   }
 
   return fAdc;

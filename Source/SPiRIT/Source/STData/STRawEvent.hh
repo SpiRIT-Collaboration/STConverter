@@ -8,8 +8,8 @@
 //  2013. 08. 16                                    
 // =================================================
 
-#ifndef STEVENT_H
-#define STEVENT_H
+#ifndef STRAWEVENT_H
+#define STRAWEVENT_H
 
 #include "TROOT.h"
 #include "TObject.h"
