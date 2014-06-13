@@ -13,13 +13,13 @@
 
 #include "TROOT.h"
 
-class STRawEvent;
-class STPad;
+#include "STRawEvent.hh"
+#include "STPad.hh"
 
-class TCanvas;
-class TH2D;
-class TH1D;
-class TLine;
+#include "TCanvas.h"
+#include "TH2D.h"
+#include "TH1D.h"
+#include "TLine.h"
 
 class STPlot : public TObject
 {

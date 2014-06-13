@@ -30,7 +30,14 @@ STCore::STCore()
 STCore::STCore(Char_t *filename)
 {
   Initialize();
-  SetGraw(filename);
+  AddGraw(filename);
+}
+
+STCore::STCore(Char_t *filename, Int_t numTbs)
+{
+  Initialize();
+  AddGraw(filename);
+  SetNumTbs(numTbs);
 }
 
 STCore::~STCore()
@@ -63,9 +70,15 @@ void STCore::Initialize()
   fCurrFrameNo = 0;
 }
 
-void STCore::SetGraw(Char_t *filename)
+void STCore::AddGraw(Char_t *filename)
 {
-  fIsGraw = fDecoderPtr -> SetGraw(filename);
+  fDecoderPtr -> AddGraw(filename);
+  fIsGraw = fDecoderPtr -> SetData(0);
+}
+
+void STCore::SetNumTbs(Int_t value)
+{
+  fDecoderPtr -> SetNumTbs(value);
 }
 
 void STCore::SetInternalPedestal(Int_t startTb, Int_t numTbs)
@@ -142,12 +155,12 @@ STRawEvent *STCore::GetRawEvent(Int_t eventID)
 
         STPad *pad = new STPad(row, layer);
         Int_t *rawadc = frame -> GetRawADC(iAget, iCh);
-        for (Int_t iTb = 0; iTb < GETNumTbs; iTb++)
+        for (Int_t iTb = 0; iTb < fDecoderPtr -> GetNumTbs(); iTb++)
           pad -> SetRawADC(iTb, rawadc[iTb]);
 
         if (fIsInternalPedestal) {
           Double_t *adc = frame -> GetADC(iAget, iCh);
-          for (Int_t iTb = 0; iTb < GETNumTbs; iTb++)
+          for (Int_t iTb = 0; iTb < fDecoderPtr -> GetNumTbs(); iTb++)
             pad -> SetADC(iTb, adc[iTb]);
 
           pad -> SetMaxADCIdx(frame -> GetMaxADCIdx(iAget, iCh));
@@ -163,4 +176,9 @@ STRawEvent *STCore::GetRawEvent(Int_t eventID)
   }
 
   return NULL;
+}
+
+Int_t STCore::GetNumTbs()
+{
+  return fDecoderPtr -> GetNumTbs();
 }

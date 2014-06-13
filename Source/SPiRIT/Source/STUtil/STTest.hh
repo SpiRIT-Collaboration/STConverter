@@ -13,10 +13,11 @@
 
 #include "TObject.h"
 
-class TCanvas;
-class TH2D;
-class STMap;
-class TList;
+#include "TCanvas.h"
+#include "TH2D.h"
+#include "TList.h"
+
+#include "STMap.hh"
 
 class STTest : public TObject
 {

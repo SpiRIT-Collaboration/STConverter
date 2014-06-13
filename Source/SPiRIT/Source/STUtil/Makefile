@@ -4,22 +4,28 @@ CXX = g++
 
 PREFIX = ST
 
-LIBNAME = STData
+STCORE = ../STCore
+STDATA = ../STData
+GETDECODER = ../../../GETDecoder
+
+LIBNAME = STUtil
 TARGET = lib$(LIBNAME)
 SOURCE = $(wildcard $(PREFIX)*.cc)
-HEADER = $(wildcard $(PREFIX)*.hh)
+HEADER = $(wildcard $(PREFIX)*.hh) #$(wildcard $(STDATA)/$(PREFIX)*.hh) $(wildcard $(STCORE)/$(PREFIX)*.hh) $(wildcard $(GETDECODER)/include/*.hh)
 DICT = $(LIBNAME)Dict.cc
 LINKDEF = $(LIBNAME)LinkDef.h
-FLAGS = $(ROOT_CFLAGS)
+INCDIR = -I$(STDATA) -I$(STCORE) -I$(GETDECODER)/include
+FLAGS = $(ROOT_CFLAGS) $(INCDIR)
+LIBS = $(ROOT_LIBS) -L$(STDATA) -lSTData -L$(STCORE) -lSTCore -L$(GETDECODER) -lGETDecoder
 LIBDEST = ../../
 
 $(TARGET).so: $(SOURCE:.cc=.o) $(DICT:.cc=.o)
-	$(CXX) --shared -fPIC -o $@ $(ROOT_LIBS) $^ 
+	$(CXX) --shared -fPIC -o $@ $(LIBS) $^ 
 	@mkdir -p $(LIBDEST)
 	@ln -sf $(shell pwd)/$(TARGET).so $(LIBDEST)
 
 $(DICT): $(HEADER)
-	rootcint -f $@ -c $^ $(LINKDEF)
+	rootcint -f $@ -c $(INCDIR) $^ $(LINKDEF)
 	$(CXX) -c -fPIC $@ $(FLAGS)
 
 clean:

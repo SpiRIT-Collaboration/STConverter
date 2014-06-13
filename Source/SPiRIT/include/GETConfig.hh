@@ -1,1 +1,0 @@
-../../GETDecoder/include/GETConfig.hh

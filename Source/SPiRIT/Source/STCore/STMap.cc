@@ -13,6 +13,7 @@
 #include "STMap.hh"
 
 #include <fstream>
+#include <iostream>
 
 ClassImp(STMap);
 
@@ -93,6 +94,12 @@ void STMap::LoadChToPadMap()
   std::ifstream chToPadMap("ChToPad.map");
   chToPadMap.getline(dummy, 200);
 
+  if (!chToPadMap.is_open()) {
+    std::cout << "ChToPad.map is not loaded! Check the existance of the file!" << std::endl;
+
+    return;
+  }
+
   Int_t ch = -1;
   while (!(chToPadMap.eof())) {
     chToPadMap >> ch;
@@ -105,6 +112,12 @@ void STMap::LoadUAMap()
   char dummy[25];
   std::ifstream uaMap("UnitAsAd.map");
   uaMap.getline(dummy, 200);
+
+  if (!uaMap.is_open()) {
+    std::cout << "UnitAsAd.map is not loaded! Check the existance of the file!" << std::endl;
+
+    return;
+  }
 
   Int_t idx = -1;
   while (!(uaMap.eof())) {

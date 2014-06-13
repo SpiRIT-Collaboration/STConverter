@@ -56,7 +56,7 @@ void STPad::SetRow(Int_t val)
 
 void STPad::SetRawADC(Int_t *val)
 {
-  memcpy(val, fRawAdc, sizeof(val));
+  memcpy(val, fRawAdc, sizeof(fRawAdc));
 }
 
 void STPad::SetRawADC(Int_t idx, Int_t val)
@@ -76,7 +76,7 @@ void STPad::SetMaxADCIdx(Int_t val)
 
 void STPad::SetADC(Double_t *val)
 {
-  memcpy(fAdc, val, sizeof(val));
+  memcpy(fAdc, val, sizeof(fAdc));
 }
 
 void STPad::SetADC(Int_t idx, Double_t val)

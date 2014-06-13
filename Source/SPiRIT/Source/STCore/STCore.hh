@@ -11,31 +11,32 @@
 #ifndef _STCORE_H_
 #define _STCORE_H_
 
-#include "GETConfig.hh"
-
 #include "TObject.h"
 
-class STRawEvent;
-class STMap;
-class STPedestal;
-class GETDecoder;
-class GETFrame;
+#include "STRawEvent.hh"
+#include "STMap.hh"
+#include "STPedestal.hh"
+#include "GETDecoder.hh"
+#include "GETFrame.hh"
 
 class STCore : public TObject {
   public:
     STCore();
     STCore(Char_t *filename);
+    STCore(Char_t *filename, Int_t numTbs);
     ~STCore();
 
     void Initialize();
 
     // setters
-    void SetGraw(Char_t *filename);
+    void AddGraw(Char_t *filename);
+    void SetNumTbs(Int_t value);
     void SetInternalPedestal(Int_t startTb = 10, Int_t numTbs = 20);
     void SetPedestalData(Char_t *filename);
 
     // getters
     STRawEvent *GetRawEvent(Int_t eventID = -1);
+    Int_t GetNumTbs();
 
   private:
     STMap *fMapPtr;

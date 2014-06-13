@@ -16,8 +16,8 @@
 #include "TROOT.h"
 #include "TObject.h"
 
-class TFile;
-class TTree;
+#include "TFile.h"
+#include "TTree.h"
 
 #include <fstream>
 
