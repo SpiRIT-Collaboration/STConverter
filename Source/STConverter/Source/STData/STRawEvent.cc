@@ -20,23 +20,26 @@ STRawEvent::STRawEvent()
 :TNamed("STRawEvent", "Raw event container")
 {
   fEventID = -1;
-  fNumPads = 0;
+  fPadArray.reserve(108*112);
+}
 
-  memset(fPadsArray, 0, sizeof(fPadsArray));
+STRawEvent::STRawEvent(STRawEvent *object)
+:TNamed("STRawEvent", "Raw event container")
+{
+  fEventID = object -> GetEventID();
+  fPadArray = object -> GetPads();
 }
 
 STRawEvent::~STRawEvent()
 {
-  for (Int_t iPad = 0; iPad < fNumPads; iPad++)
-    delete fPadsArray[iPad];
 }
 
 void STRawEvent::PrintPads()
 {
-  for (Int_t iPad = 0; iPad < fNumPads; iPad++) {
+  for (Int_t iPad = 0; iPad < fPadArray.size(); iPad++) {
     std::cout << "Pad: " << std::setw(5) << iPad;
-    std::cout << " (" << std::setw(3) << fPadsArray[iPad] -> GetRow();
-    std::cout << ", " << std::setw(3) << fPadsArray[iPad] -> GetLayer() << ")";
+    std::cout << " (" << std::setw(3) << fPadArray[iPad].GetRow();
+    std::cout << ", " << std::setw(3) << fPadArray[iPad].GetLayer() << ")";
     std::cout << std::endl;
   }
 }
@@ -49,8 +52,7 @@ void STRawEvent::SetEventID(Int_t evtid)
 
 void STRawEvent::SetPad(STPad *pad)
 {
-  fPadsArray[fNumPads] = pad;
-  fNumPads++;
+  fPadArray.push_back(*pad);
 }
 
 // getters
@@ -61,22 +63,27 @@ Int_t STRawEvent::GetEventID()
 
 Int_t STRawEvent::GetNumPads()
 {
-  return fNumPads;
+  return fPadArray.size();
+}
+
+std::vector<STPad> STRawEvent::GetPads()
+{
+  return fPadArray;
 }
 
 STPad *STRawEvent::GetPad(Int_t padNo)
 {
-  return (padNo < fNumPads ? fPadsArray[padNo] : 0);
+  return (padNo < GetNumPads() ? &fPadArray[padNo] : NULL);
 }
 
 STPad *STRawEvent::GetPad(Int_t row, Int_t layer)
 {
-  for (Int_t iPad = 0; iPad < fNumPads; iPad++) {
-    Int_t padRow = fPadsArray[iPad] -> GetRow();
-    Int_t padLayer = fPadsArray[iPad] -> GetLayer();
+  for (Int_t iPad = 0; iPad < GetNumPads(); iPad++) {
+    Int_t padRow = fPadArray[iPad].GetRow();
+    Int_t padLayer = fPadArray[iPad].GetLayer();
 
     if (row == padRow && layer == padLayer)
-      return fPadsArray[iPad];
+      return &fPadArray[iPad];
   }
 
   return 0;
