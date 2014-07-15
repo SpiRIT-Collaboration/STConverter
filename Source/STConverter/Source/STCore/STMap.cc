@@ -35,10 +35,10 @@ void STMap::GetRowNLayer(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t chId
   Int_t UAIdx = GetUAIdx(coboIdx, asadIdx);
   if (UAIdx < 24) {
     padRow = (UAIdx/4)*9 + padRowOfCh[chIdx];
-    padLayer = (UAIdx%4)*28 + agetIdx*7 + padLayerOfCh[chIdx];
+    padLayer = (UAIdx%4)*28 + (3 - agetIdx)*7 + padLayerOfCh[chIdx];
   } else {
     padRow = (UAIdx/4)*9 + (8 - padRowOfCh[chIdx]); 
-    padLayer = (UAIdx%4)*28 + (3 - agetIdx)*7 + (6 - padLayerOfCh[chIdx]);
+    padLayer = (UAIdx%4)*28 + agetIdx*7 + (6 - padLayerOfCh[chIdx]);
   }
 
   return;
