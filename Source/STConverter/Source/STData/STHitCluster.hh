@@ -1,8 +1,8 @@
 // =================================================
-//  STCluster Class                          
+//  STHitCluster Class                          
 //                                                  
 //  Description:                                    
-//    Container for a cluster data
+//    Container for a cluster of hits
 //                                                  
 //  Genie Jhang ( geniejhang@majimak.com )          
 //  2014. 07. 15                                    
@@ -19,15 +19,15 @@
 
 #include <vector>
 
-class STCluster : public TObject 
+class STHitCluster : public TObject 
 {
   public:
-    STCluster();
-    STCluster(STCluster *cluster);
-    ~STCluster();
+    STHitCluster();
+    STHitCluster(STHitCluster *cluster);
+    ~STHitCluster();
 
     TVector3 GetPosition();
-    TVector3 GetPosError();
+    TVector3 GetPosSigma();
     TMatrixD GetCovMatrix();
 
     Int_t GetNumHits();
@@ -37,12 +37,12 @@ class STCluster : public TObject
 
   private:
     TVector3 fPosition;
-    TVector3 fPosError;
+    TVector3 fPosSigma;
     TMatrixD fCovariant;
 
     std::vector<Int_t> fHitNoArray;
 
-  ClassDef(STCluster, 1)
+  ClassDef(STHitCluster, 1)
 };
 
 #endif
