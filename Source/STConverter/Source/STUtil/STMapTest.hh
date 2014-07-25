@@ -1,5 +1,5 @@
 // =================================================
-//  STTest Class
+//  STMapTest Class
 // 
 //  Description:
 //    Test AGET & UnitAsAd map with plot
@@ -8,10 +8,11 @@
 //  2013. 08. 30
 // =================================================
 
-#ifndef STTEST_H
-#define STTEST_H
+#ifndef STMAPTEST_H
+#define STMAPTEST_H
 
 #include "TObject.h"
+#include "TString.h"
 
 #include "TCanvas.h"
 #include "TH2D.h"
@@ -19,13 +20,16 @@
 
 #include "STMap.hh"
 
-class STTest : public TObject
+class STMapTest : public TObject
 {
   public:
-    STTest();
-    ~STTest();
+    STMapTest();
+    ~STMapTest();
 
-    void ShowAGETMap();
+    void SetUAMap(TString filename);
+    void SetAGETMap(TString filename);
+
+    void ShowAGETMap(Int_t UAIdx = 0);
     void ShowUAMap();
     void PrintMap(Int_t padRow, Int_t padLayer);
 
@@ -34,8 +38,6 @@ class STTest : public TObject
 
     TCanvas *agetCvs;
     TH2D *agetHist;
-    TList *agetChList;
-    TList *agetLineList;
 
     TCanvas *uaCvs;
     TH2D *uaHist;
@@ -43,7 +45,10 @@ class STTest : public TObject
     TList *uaMapList;
     TList *uaLineList;
 
-  ClassDef(STTest, 1);
+    Bool_t fIsUAMap;
+    Bool_t fIsAGETMap;
+
+  ClassDef(STMapTest, 1);
 };
 
 #endif

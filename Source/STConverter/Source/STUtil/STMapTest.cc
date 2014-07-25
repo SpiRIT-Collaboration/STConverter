@@ -1,5 +1,5 @@
 // =================================================
-//  STTest Class
+//  STMapTest Class
 // 
 //  Description:
 //    Test AGET & UnitAsAd map with plot
@@ -8,8 +8,7 @@
 //  2013. 08. 30
 // =================================================
 
-#include "STTest.hh"
-#include "STMap.hh"
+#include "STMapTest.hh"
 
 #include "Riostream.h"
 #include "TStyle.h"
@@ -19,89 +18,108 @@
 #include "TList.h"
 #include "TLine.h"
 
-ClassImp(STTest);
+ClassImp(STMapTest);
 
-STTest::STTest()
+STMapTest::STMapTest()
 {
   map = new STMap();
 
   agetCvs = NULL;
   agetHist = NULL;
-  agetChList = NULL;
-  agetLineList = NULL;
 
   uaCvs = NULL;
   uaHist = NULL;
   uaList = NULL;
   uaMapList = NULL;
   uaLineList = NULL;
+
+  fIsUAMap = 0;
+  fIsAGETMap = 0;
 }
 
-STTest::~STTest()
+STMapTest::~STMapTest()
 {
   if (agetHist != NULL)
     delete agetHist;
 }
 
-void STTest::ShowAGETMap()
+void STMapTest::SetUAMap(TString filename)
 {
-  if (agetHist == NULL) {
-    gStyle -> SetOptStat(0);
-    agetCvs = new TCanvas("agetCvs", "", 600, 500);
-    agetHist = new TH2D("agetHist", "AGET Map Test (Top View)", 7, -0.5, 6.5, 9, -0.5, 8.5);
-    agetHist -> GetXaxis() -> SetTitle("Local Layer Number");
-    agetHist -> GetXaxis() -> CenterTitle();
-    agetHist -> GetYaxis() -> SetTitle("Local Row Number");
-    agetHist -> GetYaxis() -> CenterTitle();
-    agetHist -> Draw("colz");
+  map -> SetUAMap(filename);
 
-    agetChList = new TList();
-    for (Int_t iCh = 0; iCh < 68; iCh++) {
-      Int_t row, layer;
-      map -> GetRowNLayer(0, 0, 0, iCh, row, layer);
+  fIsUAMap = map -> IsSetUAMap();
+}
 
-      TLatex *textCh = NULL;
-      if (iCh < 10)
-        textCh = new TLatex(layer - 0.07, row - 0.16, Form("%d", iCh));
-      else 
-        textCh = new TLatex(layer - 0.19, row - 0.16, Form("%d", iCh));
+void STMapTest::SetAGETMap(TString filename)
+{
+  map -> SetAGETMap(filename);
 
-      textCh -> Draw("same");
-      agetChList -> Add(textCh);
-      textCh = NULL;
-    }
+  fIsAGETMap = map -> IsSetAGETMap();
+}
 
-    agetLineList = new TList();
-    for (Int_t iLine = 0; iLine < 6; iLine++) {
-      TLine *line = new TLine(iLine + 0.5, -0.5, iLine + 0.5, 8.5);
-      line -> Draw("same");
-      agetLineList -> Add(line);
-    }
-    for (Int_t iLine = 0; iLine < 8; iLine++) {
-      TLine *line = new TLine(-0.5, iLine + 0.5, 6.5, iLine + 0.5);
-      line -> Draw("same");
-      agetLineList -> Add(line);
-    }
-    
-  } else {
-    gStyle -> SetOptStat(0);
-    agetCvs = new TCanvas("agetCvs", "", 600, 500);
-    agetHist -> Draw("colz");
- 
-    TIter nextCh(agetChList);
-    TLatex *text = NULL;
-    while ((text = (TLatex *) nextCh()))
-      text -> Draw("same");
+void STMapTest::ShowAGETMap(Int_t UAIdx)
+{
+  if (!fIsAGETMap || !fIsUAMap) {
+    cout << "== Either AGETMap or UAMap file is not set!" << endl;
 
-    TIter nextLine(agetLineList);
-    TLine *line = NULL;
-    while ((line = (TLine *) nextLine()))
-      line -> Draw("same");
+    return;
+  }
+
+  if (UAIdx < 0 || UAIdx > 47) {
+    cout << "== UnitAsAd index range:[0, 47]!" << endl;
+
+    return;
+  }
+
+  if (agetHist != NULL) delete agetHist;
+
+  gStyle -> SetOptStat(0);
+  agetCvs = new TCanvas("agetCvs", "", 600, 500);
+  agetHist = new TH2D("agetHist", "AGET Map Test (Top View)", 7, -0.5, 6.5, 9, -0.5, 8.5);
+  agetHist -> GetXaxis() -> SetTitle("Local Layer Number");
+  agetHist -> GetXaxis() -> CenterTitle();
+  agetHist -> GetYaxis() -> SetTitle("Local Row Number");
+  agetHist -> GetYaxis() -> CenterTitle();
+  agetHist -> Draw("colz");
+
+  Int_t coboIdx = map -> GetCoboIdx(UAIdx);
+  Int_t asadIdx = map -> GetAsadIdx(UAIdx);
+
+  for (Int_t iCh = 0; iCh < 68; iCh++) {
+    Int_t row, layer;
+    map -> GetRowNLayer(coboIdx, asadIdx, 0, iCh, row, layer);
+
+    if (row == -2 || layer == -2)
+      continue;
+
+    TLatex *textCh = NULL;
+    if (iCh < 10)
+      textCh = new TLatex(layer%28%7 - 0.07, row%9 - 0.16, Form("%d", iCh));
+    else 
+      textCh = new TLatex(layer%28%7 - 0.19, row%9 - 0.16, Form("%d", iCh));
+
+    textCh -> Draw("same");
+    textCh = NULL;
+  }
+
+  for (Int_t iLine = 0; iLine < 6; iLine++) {
+    TLine *line = new TLine(iLine + 0.5, -0.5, iLine + 0.5, 8.5);
+    line -> Draw("same");
+  }
+  for (Int_t iLine = 0; iLine < 8; iLine++) {
+    TLine *line = new TLine(-0.5, iLine + 0.5, 6.5, iLine + 0.5);
+    line -> Draw("same");
   }
 }
 
-void STTest::ShowUAMap()
+void STMapTest::ShowUAMap()
 {
+  if (!fIsUAMap) {
+    cout << "== AGETMap file is not set!" << endl;
+
+    return;
+  }
+
   if (uaHist == NULL) {
     gStyle -> SetOptStat(0);
     uaCvs = new TCanvas("uaCvs", "", 800, 530);
@@ -172,7 +190,7 @@ void STTest::ShowUAMap()
   }
 }
 
-void STTest::PrintMap(Int_t padRow, Int_t padLayer)
+void STMapTest::PrintMap(Int_t padRow, Int_t padLayer)
 {
   Int_t uaIdx, coboIdx, asadIdx, agetIdx, chIdx;
   map -> GetMapData(padRow, padLayer, uaIdx, coboIdx, asadIdx, agetIdx, chIdx);
