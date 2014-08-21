@@ -6,7 +6,7 @@ make:
 	@ln -s Source/STConverter/libSTData.so .
 	@ln -s Source/STConverter/libSTCore.so .
 	@ln -s Source/STConverter/libSTUtil.so .
-	@ln -s Source/STConverter/mapping/UnitAsAd.map .
+	@ln -s Source/STConverter/mapping/AGET.map .
 	@ln -s Source/STConverter/mapping/ChToPad.map .
 	@g++ -fPIC --shared -o libSTConverter.so libSTData.so libSTCore.so libSTUtil.so libGETDecoder.so
 	@cp -rf Source/GETDecoder/examples GETDecoder_examples
