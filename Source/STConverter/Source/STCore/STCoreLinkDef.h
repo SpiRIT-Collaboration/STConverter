@@ -7,5 +7,7 @@
 #pragma link C++ class STCore;
 #pragma link C++ class STMap;
 #pragma link C++ class STPedestal;
+#pragma link C++ class STSignalDelay;
+#pragma link C++ class STGainCalibration;
 
 #endif

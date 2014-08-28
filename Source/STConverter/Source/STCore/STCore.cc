@@ -58,12 +58,15 @@ void STCore::Initialize()
   fDecoderPtr = new GETDecoder();
 //  fDecoderPtr -> SetDebugMode(1);
 
-  fIsGraw = 0;
-  fIsPedestalData = 0;
-  fIsInternalPedestal = 0;
+  fIsGraw = kFALSE;
+  fIsPedestalData = kFALSE;
+  fIsInternalPedestal = kFALSE;
 
-  fStartTb = 0;
-  fNumTbs = 0;
+  fGainCalibrationPtr = new STGainCalibration();
+  fIsGainCalibrationData = kFALSE;
+
+  fStartTb = 3;
+  fNumTbs = 20;
 
   fPrevEventNo = -1;
   fCurrEventNo = -1;
@@ -83,23 +86,33 @@ void STCore::SetNumTbs(Int_t value)
 
 void STCore::SetInternalPedestal(Int_t startTb, Int_t numTbs)
 {
-  fIsInternalPedestal = 1;
-  fIsPedestalData = 0;
+  fIsInternalPedestal = kTRUE;
+  fIsPedestalData = kFALSE;
 
   fStartTb = startTb;
   fNumTbs = numTbs;
 }
 
-Bool_t STCore::SetPedestalData(TString filename)
+Bool_t STCore::SetPedestalData(TString filename, Int_t startTb, Int_t numTbs)
 {
   fIsPedestalData = fPedestalPtr -> SetPedestalData(filename);
 
-  if (fIsPedestalData)
-    fIsInternalPedestal = 0;
-  else
+  if (fIsPedestalData) {
+    fIsInternalPedestal = kFALSE;
+
+    fStartTb = startTb;
+    fNumTbs = numTbs;
+  } else
     std::cout << "== Pedestal data is not set! Check it exists!" << std::endl;
 
   return fIsPedestalData;
+}
+
+Bool_t STCore::SetGainCalibrationData(TString filename)
+{
+  fIsGainCalibrationData = fGainCalibrationPtr -> SetGainCalibrationData(filename);
+
+  return fIsGainCalibrationData;
 }
 
 void STCore::SetUAMap(TString filename)
@@ -154,9 +167,6 @@ STRawEvent *STCore::GetRawEvent(Int_t eventID)
     Int_t coboID = frame -> GetCoboID();
     Int_t asadID = frame -> GetAsadID();
 
-    if (fIsInternalPedestal)
-      frame -> CalcPedestal(fStartTb, fNumTbs);
-
     for (Int_t iAget = 0; iAget < 4; iAget++) {
       for (Int_t iCh = 0; iCh < 68; iCh++) {
         Int_t row, layer;
@@ -171,31 +181,55 @@ STRawEvent *STCore::GetRawEvent(Int_t eventID)
           pad -> SetRawADC(iTb, rawadc[iTb]);
 
         if (fIsInternalPedestal) {
+          frame -> CalcPedestal(iAget, iCh, fStartTb, fNumTbs);
+          frame -> SubtractPedestal(iAget, iCh);
+
           Double_t *adc = frame -> GetADC(iAget, iCh);
           for (Int_t iTb = 0; iTb < fDecoderPtr -> GetNumTbs(); iTb++)
             pad -> SetADC(iTb, adc[iTb]);
 
           pad -> SetMaxADCIdx(frame -> GetMaxADCIdx(iAget, iCh));
-          pad -> SetPedestalSubtracted(1);
+          pad -> SetPedestalSubtracted(kTRUE);
         } else if (fIsPedestalData) {
+          frame -> CalcPedestal(iAget, iCh, fStartTb, fNumTbs);
+
           Double_t pedestal[512];
           Double_t pedestalSigma[512];
 
-          fPedestalPtr -> GetPedestal(coboID, asadID, iAget, iCh, pedestal, pedestalSigma);
+          fPedestalPtr -> GetPedestal(row, layer, pedestal, pedestalSigma);
           frame -> SetPedestal(iAget, iCh, pedestal, pedestalSigma);
+          frame -> SubtractPedestal(iAget, iCh);
+
+          Double_t scaleFactor = 1;
+          if (fIsGainCalibrationData) {
+            scaleFactor = fGainCalibrationPtr -> GetScaleFactor(row, layer);
+            pad -> SetGainCalibrated(kTRUE);
+          }
+
           Double_t *adc = frame -> GetADC(iAget, iCh);
           for (Int_t iTb = 0; iTb < fDecoderPtr -> GetNumTbs(); iTb++)
-            pad -> SetADC(iTb, adc[iTb]);
+            pad -> SetADC(iTb, adc[iTb]*scaleFactor);
 
           pad -> SetMaxADCIdx(frame -> GetMaxADCIdx(iAget, iCh));
-          pad -> SetPedestalSubtracted(1);
+          pad -> SetPedestalSubtracted(kTRUE);
         }
 
         fRawEventPtr -> SetPad(pad);
       }
     }
 
-    fCurrFrameNo++;
+    Int_t frameType = fDecoderPtr -> GetFrameType();
+    if (frameType == GETDecoder::kMergedID || frameType == GETDecoder::kMergedTime) {
+      Int_t currentInnerFrameID = fDecoderPtr -> GetCurrentInnerFrameID();
+      Int_t numInnerFrames = fDecoderPtr -> GetNumMergedFrames();
+
+      if (currentInnerFrameID + 1 == numInnerFrames) {
+        fCurrFrameNo++;
+        fPrevEventNo = fCurrEventNo;
+        return fRawEventPtr;
+      }
+    } else
+      fCurrFrameNo++;
   }
 
   return NULL;
