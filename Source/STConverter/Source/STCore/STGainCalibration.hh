@@ -8,7 +8,7 @@
 //  2014. 08. 25
 // =================================================
 
-#ifndef STGAINCALIBRAITON_H
+#ifndef STGAINCALIBRATION_H
 #define STGAINCALIBRATION_H
 
 #include "TROOT.h"
