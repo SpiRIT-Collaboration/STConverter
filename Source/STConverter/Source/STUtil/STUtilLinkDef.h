@@ -6,5 +6,6 @@
 
 #pragma link C++ class STPlot;
 #pragma link C++ class STMapTest;
+#pragma link C++ class STGenerator;
 
 #endif
