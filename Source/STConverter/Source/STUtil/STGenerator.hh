@@ -31,6 +31,7 @@ class STGenerator : public TObject {
     void SetOutputFile(TString filename);
     Bool_t SetParameterDir(TString dir);
     Bool_t SetPedestalData(TString filename, Int_t startTb = 3, Int_t numTbs = 20);
+    void SetPersistence(Bool_t value = kTRUE);
 
     Bool_t AddData(TString filename);
     Bool_t AddData(Double_t voltage, TString filename);
@@ -42,13 +43,14 @@ class STGenerator : public TObject {
     void Print();
 
   private:
-    void GeneratePedestal();
+    void GeneratePedestalData();
     void GenerateGainCalibrationData();
+    void GenerateSignalDelayData();
 
     Int_t GetIntParameter(TString parameter);
     TString GetFileParameter(Int_t index);
 
-    enum EMode { kError, kPedestal, kGain };
+    enum EMode { kError, kPedestal, kGain, kSignalDelay };
     Int_t fMode;
 
     vector<Double_t> fVoltageArray;
@@ -56,6 +58,8 @@ class STGenerator : public TObject {
     STCore *fCore;
     TString fParameterFile;
     TString fOutputFile;
+
+    Bool_t fIsPersistence;
 
     Int_t fNumEvents;
     Int_t *fEventList;
