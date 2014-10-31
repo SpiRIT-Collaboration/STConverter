@@ -53,20 +53,14 @@ STMapConverter::LoadGETMap(TString filename)
   while (!(inFile.eof())) {
     inFile >> cobo >> asad >> aget >> ch >> padX >> padZ;
 
-    Int_t padRow = (padX + 432 - 4)/8.;
-    Int_t padLayer = (padZ - 6)/12.;
+    Int_t padRow = (padX - 1.95)/3.9 + 48;
+    Int_t padLayer = (padZ - 15)/30.;
 
-    Int_t uaLayer = padLayer/(7*4);
-    Int_t uaRow = padRow/9;
-
-    Int_t uaIdx = uaLayer*100 + uaRow;
+    Int_t uaIdx = padLayer/4;
 
     fMap -> SetUAMap(uaIdx, cobo, asad);
 
-    if (uaRow < 6)
-      fMap -> SetAGETMap(ch, padRow%9, padLayer%7);
-    else
-      fMap -> SetAGETMap(ch, 8 - padRow%9, 6 - padLayer%7);
+    fMap -> SetAGETMap(ch, padRow, padLayer%4);
   }
 
   inFile.close();
@@ -109,7 +103,7 @@ STMapConverter::SaveSTMap(TString uaMap, TString agetMap)
     Int_t padRow = -2, padLayer = -2;
     fMap -> GetAGETMap(iCh, padRow, padLayer);
 
-    padLayer %= 7;
+    padLayer %= 4;
 
     outFile << setw(4) << iCh << setw(9) << padLayer << setw(7) << padRow << endl;
   } 
@@ -147,8 +141,8 @@ STMapConverter::SaveGETMap(TString filename)
           if (padRow == -2 || padLayer == -2)
             continue;
 
-          Double_t padX = (padRow*8. + 4.) - 432;
-          Double_t padZ = padLayer*12. + 6;
+          Double_t padX = (padRow - 48)*3.9 + 1.95;
+          Double_t padZ = padLayer*30. + 15.;
 
           outFile << setw(6) << iCobo << setw(6) << iAsad;
           outFile << setw(6) << iAget << setw(9) << iCh;
