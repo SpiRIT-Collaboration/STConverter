@@ -65,11 +65,11 @@ Bool_t STMap::GetMapData(Int_t padRow, Int_t padLayer, Int_t &UAIdx, Int_t &cobo
     return kFALSE;
   }
 
-  UAIdx = (padLayer/28)*100 + padRow;
+  UAIdx = (padLayer/28)*100 + padRow/9;
   coboIdx = GetCoboIdx(UAIdx);
   asadIdx = GetAsadIdx(UAIdx);
 
-  if (padRow < 6) {
+  if (padRow/9 < 6) {
     Int_t agetRow = padRow%9;
     Int_t uaLayer = padLayer%28;
 
