@@ -49,8 +49,8 @@ class STPlot : public TObject
     TH2D *padplaneHist;
     TH1D *padHist;
     TH2D *layerHist;
-    TLine *horizLine[108];
-    TLine *vertLine[112];
+    TLine *horizLine[11];
+    TLine *vertLine[95];
 
   ClassDef(STPlot, 1);
 };

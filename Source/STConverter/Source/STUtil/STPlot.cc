@@ -109,16 +109,16 @@ void STPlot::DrawLayer(Int_t layerNo)
 void STPlot::PreparePadplaneHist()
 {
 //    cvs = new TCanvas("Event Display", "", 1600, 1000); // For large monitor
-    padplaneCvs = new TCanvas("Event Display", "", 1200, 750);
+    padplaneCvs = new TCanvas("Event Display", "", 870, 780);
     padplaneCvs -> Draw();
 
     gStyle -> SetOptStat(0000);
     gStyle -> SetPadRightMargin(0.08);
-    gStyle -> SetPadLeftMargin(0.06);
+    gStyle -> SetPadLeftMargin(0.11);
     gStyle -> SetPadTopMargin(0.08);
     gStyle -> SetPadBottomMargin(0.08);
-    gStyle -> SetTitleOffset(1.0, "X");
-    gStyle -> SetTitleOffset(0.85, "Y");
+    gStyle -> SetTitleOffset(1.2, "X");
+    gStyle -> SetTitleOffset(1.4, "Y");
 
 /*
     timePad = new TPad("timePad", "Time Plane Display", 0.5, 0, 1, 1);
@@ -127,34 +127,28 @@ void STPlot::PreparePadplaneHist()
 */
     
     padplaneCvs -> cd();
-    padplaneHist = new TH2D("padplaneHist", "Pad Plane", 112, 0, 1344, 108, -432, 432);
+    padplaneHist = new TH2D("padplaneHist", "BRAHMS-TPC Pad Plane", 96, -187.2, 187.2, 12, 0, 360);
 //        padplane -> GetYaxis() -> SetNdivisions(15, kTRUE);
-        padplaneHist -> GetXaxis() -> SetTickLength(0.01);
-        padplaneHist -> GetXaxis() -> SetTitle("z (mm)");
-        padplaneHist -> GetXaxis() -> CenterTitle();
-        padplaneHist -> GetYaxis() -> SetTickLength(0.01);
-        padplaneHist -> GetYaxis() -> SetTitle("x (mm)");
-        padplaneHist -> GetYaxis() -> CenterTitle();
-        padplaneHist -> Draw("colz");
+    padplaneHist -> GetXaxis() -> SetTickLength(0.01);
+    padplaneHist -> GetXaxis() -> SetTitle("x (mm)");
+    padplaneHist -> GetXaxis() -> CenterTitle();
+    padplaneHist -> GetYaxis() -> SetTickLength(0.01);
+    padplaneHist -> GetYaxis() -> SetTitle("z (mm)");
+    padplaneHist -> GetYaxis() -> CenterTitle();
+    padplaneHist -> Draw("colz");
 
-    Double_t padLX = 8; // mm
-    Double_t padLZ = 12; // mm
+    Double_t padLX = 3.9; // mm
+    Double_t padLZ = 30.; // mm
 
-    for (Int_t i = 0; i < 107; i++) {
-        horizLine[i] = new TLine(0, -432 + (i + 1)*padLX, 1344, -432 + (i + 1)*padLX);
-        if ((i + 1)%9 == 0)
-            horizLine[i] -> SetLineStyle(1);
-        else
-            horizLine[i] -> SetLineStyle(3);
-        horizLine[i] -> Draw("same");
+    for (Int_t i = 0; i < 11; i++) {
+      horizLine[i] = new TLine(-187.2, (i + 1)*padLZ, 187.2, (i + 1)*padLZ);
+      horizLine[i] -> SetLineStyle(3);
+      horizLine[i] -> Draw("same");
     }
 
-    for (Int_t i = 0; i < 111; i++) {
-        vertLine[i] = new TLine((i + 1)*padLZ, -432, (i + 1)*padLZ, 432);
-        if ((i + 1)%7 == 0)
-            vertLine[i] -> SetLineStyle(1);
-        else
-            vertLine[i] -> SetLineStyle(3);
-        vertLine[i] -> Draw("same");
+    for (Int_t i = 0; i < 95; i++) {
+      vertLine[i] = new TLine((i + 1)*padLX - 187.2, 0, (i + 1)*padLX - 187.2, 360);
+      vertLine[i] -> SetLineStyle(3);
+      vertLine[i] -> Draw("same");
     }
 }
