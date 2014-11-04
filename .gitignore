@@ -1,0 +1,4 @@
+*.so
+*.o
+*Dict.cc
+*Dict.h
