@@ -18,10 +18,10 @@ make:
 clean:
 	cd Source/GETDecoder; make clean
 	cd Source/STConverter; make clean
+	@rm -f makeSummary
 	@rm -f *.so
 	@rm -f *.map
-	@rm -f headers/*
-	@rmdir headers
+	@if [ -d "headers" ]; then (rm -f headers/*; rmdir headers;); fi
 
 summary:
 	@g++ -o makeSummary makeSummary.cc `root-config --cflags --glibs` -I./headers -L./ -lGETDecoder

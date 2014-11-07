@@ -5,8 +5,7 @@ make:
 
 clean:
 	@for i in $(MODULES); do (cd Source/$$i; make clean); done
-	@rm -f headers/*
-	@rmdir headers
+	@if [ -d "headers" ]; then (rm -f headers/*; rmdir headers;); fi
 
 install:
 	@if [ ! -d "headers" ]; then mkdir headers; fi
