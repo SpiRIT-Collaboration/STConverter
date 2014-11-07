@@ -120,7 +120,7 @@ void makeSummary(TString grawFile) {
         Int_t *rawAdc = fFrame -> GetRawADC(iAget, iCh);
         Double_t *adc = fFrame -> GetADC(iAget, iCh);
 
-        for (Int_t iAdc = 0; iAdc < 512; iAdc++) {
+        for (Int_t iAdc = 1; iAdc < 511; iAdc++) {
           raHist -> Fill(rawAdc[iAdc]);
           hSigma[asadIdx][iAget][iCh] -> Fill(rawAdc[iAdc]); // <-- Sigma
 
@@ -134,10 +134,10 @@ void makeSummary(TString grawFile) {
         hMean[asadIdx][iAget][iCh] -> Fill(mean); // <-- Mean
 
         Int_t maxTb = aHist -> GetMaximumBin();
-        if (maxTb != 512 && maxTb != 1) { // exclude the first and the last time buckets
+//        if (maxTb != 512 && maxTb != 1) { // exclude the first and the last time buckets
           Double_t maxADC = aHist -> GetBinContent(maxTb);
           hMaxADCMean[asadIdx][iAget][iCh] -> Fill(maxADC); // <-- Max ADC mean
-        }
+//        }
       }
     }
   }
