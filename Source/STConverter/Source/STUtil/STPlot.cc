@@ -56,20 +56,18 @@ Bool_t STPlot::CheckEvent()
 // Setters
 void STPlot::SetEvent(STRawEvent *anEvent)
 {
-  Clear();
-
   event = anEvent;
 }
 
 void STPlot::DrawPadplane()
 {
-  if (padplaneHist)
-    return;
-
   if (CheckEvent())
     return;
 
-  PreparePadplaneHist();
+  if (padplaneCvs == NULL)
+    PreparePadplaneHist();
+
+  padplaneHist -> Reset();
 
   Int_t numPads = event -> GetNumPads();
   Double_t max = 0;
@@ -79,11 +77,14 @@ void STPlot::DrawPadplane()
 
     Double_t *adc = aPad -> GetADC();
 
-    padplaneHist -> SetBinContent(aPad -> GetLayer() + 1, aPad -> GetRow() + 1, aPad -> GetADC(aPad -> GetMaxADCIdx()));
+    padplaneHist -> SetBinContent(aPad -> GetRow() + 1, aPad -> GetLayer() + 1, aPad -> GetADC(aPad -> GetMaxADCIdx()));
     if(aPad -> GetADC(aPad -> GetMaxADCIdx()) > max) max = aPad -> GetADC(aPad -> GetMaxADCIdx());
   }
 
   padplaneHist -> SetMaximum(max);
+
+  padplaneCvs -> Modified();
+  padplaneCvs -> Update();
 }
 
 void STPlot::DrawADC(Int_t padNo)
