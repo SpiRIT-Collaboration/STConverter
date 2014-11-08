@@ -42,7 +42,7 @@ Bool_t STMap::GetRowNLayer(Int_t coboIdx, Int_t asadIdx, Int_t agetIdx, Int_t ch
   }
 
   Int_t UAIdx = GetUAIdx(coboIdx, asadIdx);
-  padRow = fPadRowOfCh[chIdx];
+  padRow = agetIdx*16 + fPadRowOfCh[chIdx];
   padLayer = UAIdx*4 + fPadLayerOfCh[chIdx];
 
   return kTRUE;
@@ -67,7 +67,7 @@ Bool_t STMap::GetMapData(Int_t padRow, Int_t padLayer, Int_t &UAIdx, Int_t &cobo
   agetIdx = (padRow - 16)/16;
 
   for (Int_t iCh = 0; iCh < 68; iCh++) {
-    if (fPadRowOfCh[iCh] == padRow && fPadLayerOfCh[iCh] == padLayer%4) {
+    if (fPadRowOfCh[iCh] == padRow%16 && fPadLayerOfCh[iCh] == padLayer%4) {
       chIdx = iCh;
       break;
     }
