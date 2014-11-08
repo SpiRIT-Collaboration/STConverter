@@ -60,7 +60,7 @@ STMapConverter::LoadGETMap(TString filename)
 
     fMap -> SetUAMap(uaIdx, cobo, asad);
 
-    fMap -> SetAGETMap(ch, padRow, padLayer%4);
+    fMap -> SetAGETMap(ch, padRow%16 + 16, padLayer%4);
   }
 
   inFile.close();
