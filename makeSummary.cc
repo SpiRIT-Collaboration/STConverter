@@ -128,9 +128,12 @@ void makeSummary(TString grawFile) {
           hSigmaWOFPN[asadIdx][iAget][iCh] -> Fill(adc[iAdc]); // <-- FPN-subtracted Sigma
         }
 
+/*
         raHist -> Fit("gaus", "0Q"); // Fit to find mean
 
         Double_t mean = ((TF1 *) raHist -> GetFunction("gaus")) -> GetParameter(1);
+*/
+        Double_t mean = raHist -> GetMean();
         hMean[asadIdx][iAget][iCh] -> Fill(mean); // <-- Mean
 
         Int_t maxTb = aHist -> GetMaximumBin();
@@ -150,28 +153,33 @@ void makeSummary(TString grawFile) {
       for (Int_t iCh = 0; iCh < 68; iCh++) {
         Double_t mean = 0;
         if (hMean[iAsad][iAget][iCh] -> GetEntries()) {
-          hMean[iAsad][iAget][iCh] -> Fit("gaus", "0Q");
-          mean = ((TF1 *) hMean[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(1);
+//          hMean[iAsad][iAget][iCh] -> Fit("gaus", "0Q");
+//          mean = ((TF1 *) hMean[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(1);
+          mean = hMean[iAsad][iAget][iCh] -> GetMean();
         }
 
         Double_t sigma = 0;
         if (hSigma[iAsad][iAget][iCh] -> GetEntries()) {
-          hSigma[iAsad][iAget][iCh] -> Fit("gaus", "0Q");
-          sigma = ((TF1 *) hSigma[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(2);
+//          hSigma[iAsad][iAget][iCh] -> Fit("gaus", "0Q");
+//          sigma = ((TF1 *) hSigma[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(2);
+          sigma = hSigma[iAsad][iAget][iCh] -> GetRMS();
         }
 
         Double_t sigmaWOFPN = 0;
         if (hSigmaWOFPN[iAsad][iAget][iCh] -> GetEntries()) {
-          hSigmaWOFPN[iAsad][iAget][iCh] -> Fit("gaus", "0Q");
-          sigmaWOFPN = ((TF1 *) hSigmaWOFPN[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(2);
+//          hSigmaWOFPN[iAsad][iAget][iCh] -> Fit("gaus", "0Q");
+//          sigmaWOFPN = ((TF1 *) hSigmaWOFPN[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(2);
+          sigmaWOFPN = hSigmaWOFPN[iAsad][iAget][iCh] -> GetRMS();
         }
 
         Double_t maxADCMean = 0;
         Double_t maxADCSigma = 0;
         if (hMaxADCMean[iAsad][iAget][iCh] -> GetEntries()) {
-          hMaxADCMean[iAsad][iAget][iCh] -> Fit("gaus", "0Q");
-          maxADCMean = ((TF1 *) hMaxADCMean[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(1);
-          maxADCSigma = ((TF1 *) hMaxADCMean[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(2);
+//          hMaxADCMean[iAsad][iAget][iCh] -> Fit("gaus", "0Q");
+//          maxADCMean = ((TF1 *) hMaxADCMean[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(1);
+//          maxADCSigma = ((TF1 *) hMaxADCMean[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(2);
+          maxADCMean = hMaxADCMean[iAsad][iAget][iCh] -> GetMean();
+          maxADCSigma = hMaxADCMean[iAsad][iAget][iCh] -> GetRMS();
         }
 
         // M-CoBo
