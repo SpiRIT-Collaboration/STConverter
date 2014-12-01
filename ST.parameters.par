@@ -1,0 +1,18 @@
+################################################################################
+# Parameters used throughout SPiRITROOT software
+# Format:
+# parameter_name:parameter_type(Int_t-integer, Double_t-double) parameter_value
+# STDigiPar
+# Description of parameters
+################################################################################
+[STDigiPar]
+PadPlaneX:Double_t           374.4   # mm
+PadPlaneZ:Double_t             360   # mm
+PadSizeX:Double_t              3.9   # mm
+PadSizeZ:Double_t               30   # mm
+PadRows:Int_t                   96   #
+PadLayers:Int_t                 12   #
+NumTbs:Int_t                   512
+UAMapFile:Int_t                  0
+AGETMapFile:Int_t                1
+################################################################################
