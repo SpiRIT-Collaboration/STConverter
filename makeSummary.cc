@@ -14,6 +14,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <cstdlib>
 
 using std::ofstream;
 using std::cout;
@@ -36,7 +37,7 @@ void Print(ofstream &outFile,
 Int_t wCoboIdx, wAsadIdx, wAgetIdx, wChIdx;
 Double_t wMean, wSigma, wSigmaWOFPN, wMaxADCMean, wMaxADCSigma;
 
-void makeSummary(TString grawFile) {
+void makeSummary(TString grawFile, Int_t numTbs, Bool_t positivePolarity) {
 #ifdef __CINT__
   gSystem -> Load("libSTConverter.so");
 #endif
@@ -93,6 +94,9 @@ void makeSummary(TString grawFile) {
   // Load GRAW file and initialize mapping
   GETDecoder *fDecoder = new GETDecoder(grawFile);
 
+  fDecoder -> SetPositivePolarity(positivePolarity);
+  fDecoder -> SetNumTbs(numTbs);
+
   // Start processing
   GETFrame *fFrame = NULL;
   while ((fFrame = fDecoder -> GetFrame())) {
@@ -109,7 +113,7 @@ void makeSummary(TString grawFile) {
     if (eventIdx != 0 && eventIdx%100 == 0 && asadIdx == 0)
       cout << "== [" << __FUNCTION__ << "] Event index: " << eventIdx << endl;
 
-    fFrame -> SetFPNPedestal();
+    fFrame -> SetFPNPedestal(200);
 
     for (Int_t iAget = 0; iAget < 4; iAget++) {
       for (Int_t iCh = 0; iCh < 68; iCh++) {
@@ -120,7 +124,7 @@ void makeSummary(TString grawFile) {
         Int_t *rawAdc = fFrame -> GetRawADC(iAget, iCh);
         Double_t *adc = fFrame -> GetADC(iAget, iCh);
 
-        for (Int_t iAdc = 1; iAdc < 511; iAdc++) {
+        for (Int_t iAdc = 1; iAdc < numTbs - 1; iAdc++) {
           raHist -> Fill(rawAdc[iAdc]);
           hSigma[asadIdx][iAget][iCh] -> Fill(rawAdc[iAdc]); // <-- Sigma
 
@@ -136,10 +140,13 @@ void makeSummary(TString grawFile) {
         Double_t mean = raHist -> GetMean();
         hMean[asadIdx][iAget][iCh] -> Fill(mean); // <-- Mean
 
-        Int_t maxTb = aHist -> GetMaximumBin();
-//        if (maxTb != 512 && maxTb != 1) { // exclude the first and the last time buckets
-          Double_t maxADC = aHist -> GetBinContent(maxTb);
-          hMaxADCMean[asadIdx][iAget][iCh] -> Fill(maxADC); // <-- Max ADC mean
+        Double_t maxADC = 0;
+        for (Int_t iTb = 1; iTb < numTbs - 1; iTb++) {
+          Double_t temp = adc[iTb];
+          if (temp > maxADC)
+            maxADC = temp;
+        }
+        hMaxADCMean[asadIdx][iAget][iCh] -> Fill(maxADC);
 //        }
       }
     }
@@ -215,8 +222,16 @@ void Print(ofstream &outFile, TTree *outTree, Int_t coboIdx, Int_t asadIdx, Int_
 
 #ifndef __CINT__
 Int_t main(Int_t argc, Char_t **argv) {
-  TString grawFile = argv[1];
-  makeSummary(grawFile);
+  if (argc < 4) {
+    cout << "Usage: " << argv[0] << " FILENAME.graw  NUMTBS  POLARITY(+:1, -:0)" << endl;
+
+    return kFALSE;
+  }
+
+  Int_t numTbs = atoi(argv[1]);
+  Bool_t positivePolarity = (Bool_t)atoi(argv[2]);
+  TString grawFile = argv[3];
+  makeSummary(grawFile, numTbs, positivePolarity);
 
   return kFALSE;
 }
