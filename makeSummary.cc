@@ -223,7 +223,7 @@ void Print(ofstream &outFile, TTree *outTree, Int_t coboIdx, Int_t asadIdx, Int_
 #ifndef __CINT__
 Int_t main(Int_t argc, Char_t **argv) {
   if (argc < 4) {
-    cout << "Usage: " << argv[0] << " FILENAME.graw  NUMTBS  POLARITY(+:1, -:0)" << endl;
+    cout << "Usage: " << argv[0] << " NUMTBS  POLARITY(+:1, -:0)  FILENAME.graw" << endl;
 
     return kFALSE;
   }
