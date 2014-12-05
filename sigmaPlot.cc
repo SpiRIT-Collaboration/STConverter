@@ -21,7 +21,7 @@ void sigmaPlot(TString filename) {
     tree -> SetBranchAddress("asad", &asad);
     tree -> SetBranchAddress("aget", &aget);
     tree -> SetBranchAddress("ch", &ch);
-    tree -> SetBranchAddress("sigma", &sigma);
+    tree -> SetBranchAddress("sigmaWOFPN", &sigma);
 
     PreparePadplaneHist();
     
