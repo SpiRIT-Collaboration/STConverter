@@ -77,8 +77,16 @@ void STPlot::DrawPadplane()
 
     Double_t *adc = aPad -> GetADC();
 
-    padplaneHist -> SetBinContent(aPad -> GetRow() + 1, aPad -> GetLayer() + 1, aPad -> GetADC(aPad -> GetMaxADCIdx()));
-    if(aPad -> GetADC(aPad -> GetMaxADCIdx()) > max) max = aPad -> GetADC(aPad -> GetMaxADCIdx());
+    Double_t maxADC = 0;
+    for (Int_t i = 0; i < 512; i++) {
+      if (maxADC < aPad -> GetADC(i))
+        maxADC = aPad -> GetADC(i);
+    }
+
+    padplaneHist -> SetBinContent(aPad -> GetRow() + 1, aPad -> GetLayer() + 1, maxADC);
+    if(maxADC > max) max = maxADC;
+//    padplaneHist -> SetBinContent(aPad -> GetRow() + 1, aPad -> GetLayer() + 1, aPad -> GetADC(aPad -> GetMaxADCIdx()));
+//    if(aPad -> GetADC(aPad -> GetMaxADCIdx()) > max) max = aPad -> GetADC(aPad -> GetMaxADCIdx());
   }
 
   padplaneHist -> SetMaximum(max);
