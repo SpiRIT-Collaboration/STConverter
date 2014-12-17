@@ -31,11 +31,15 @@ void STPlot::Clear()
 //  if (padplaneHist)
  //   delete padplaneHist;
 
-  padplaneCvs = NULL;
-  isAutodelete = 0;
+  isAutodelete = kFALSE;
   event = NULL;
+
+  padplaneCvs = NULL;
   padplaneHist = NULL;
-  padHist = NULL;
+
+  padCvs = NULL;
+  padGraph[0] = NULL;
+  padGraph[1] = NULL;
 }
 
 void STPlot::SetAutodelete(Bool_t value)
@@ -94,13 +98,57 @@ void STPlot::DrawPadplane()
   padplaneHist -> SetMaximum(max);
 }
 
-void STPlot::DrawADC(Int_t padNo)
+void STPlot::DrawPad(Int_t row, Int_t layer)
 {
-  if (padHist && isAutodelete)
-    delete padHist;
+  if (!padCvs)
+    PreparePadCanvas();
+
+  if (padGraph[0] && padGraph[1] && isAutodelete) {
+    delete padGraph[0];
+    delete padGraph[1];
+  }
 
   if (CheckEvent())
     return;
+
+  STPad *pad = event -> GetPad(row, layer);
+  if (!pad)
+    return;
+
+  Int_t *tempRawAdc = pad -> GetRawADC();
+  Double_t tb[512] = {0};
+  Double_t rawAdc[512] = {0};
+  for (Int_t iTb = 0; iTb < 512; iTb++) {
+    tb[iTb] = iTb;
+    rawAdc[iTb] = tempRawAdc[iTb];
+  }
+
+  padGraph[0] = new TGraph(512, tb, rawAdc);
+  padGraph[0] -> SetTitle(Form("Raw ADC - (%d, %d)", row, layer));
+  padGraph[0] -> SetLineColor(2);
+  padGraph[0] -> GetHistogram() -> GetXaxis() -> SetTitle("Time bucket");
+  padGraph[0] -> GetHistogram() -> GetXaxis() -> CenterTitle();
+  padGraph[0] -> GetHistogram() -> GetYaxis() -> SetTitle("ADC");
+  padGraph[0] -> GetHistogram() -> GetYaxis() -> CenterTitle();
+  padGraph[0] -> GetHistogram() -> GetYaxis() -> SetLimits(-10, 4106);
+  padGraph[0] -> GetHistogram() -> GetYaxis() -> SetRangeUser(-10, 4106);
+
+  padCvs -> cd(1);
+  padGraph[0] -> Draw("AL");
+
+  Double_t *adc = pad -> GetADC();
+  padGraph[1] = new TGraph(512, tb, adc);
+  padGraph[1] -> SetTitle(Form("ADC(FPN pedestal subtracted) - (%d, %d)", row, layer));
+  padGraph[1] -> SetLineColor(2);
+  padGraph[1] -> GetHistogram() -> GetXaxis() -> SetTitle("Time bucket");
+  padGraph[1] -> GetHistogram() -> GetXaxis() -> CenterTitle();
+  padGraph[1] -> GetHistogram() -> GetYaxis() -> SetTitle("ADC");
+  padGraph[1] -> GetHistogram() -> GetYaxis() -> CenterTitle();
+  padGraph[1] -> GetHistogram() -> GetYaxis() -> SetLimits(-10, 4106);
+  padGraph[1] -> GetHistogram() -> GetYaxis() -> SetRangeUser(-10, 4106);
+
+  padCvs -> cd(2);
+  padGraph[1] -> Draw("AL");
 }
 
 void STPlot::DrawLayer(Int_t layerNo)
@@ -165,4 +213,23 @@ void STPlot::PreparePadplaneHist()
             vertLine[i] -> SetLineStyle(3);
         vertLine[i] -> Draw("same");
     }
+}
+
+void STPlot::PreparePadCanvas()
+{
+  gStyle -> SetOptStat(0000);
+  gStyle -> SetPadRightMargin(0.03);
+  gStyle -> SetPadLeftMargin(0.16);
+  gStyle -> SetPadTopMargin(0.09);
+  gStyle -> SetPadBottomMargin(0.11);
+  gStyle -> SetTitleOffset(1.05, "X");
+  gStyle -> SetTitleOffset(1.75, "Y");
+  gStyle -> SetTitleSize(0.05, "X");
+  gStyle -> SetTitleSize(0.05, "Y");
+  gStyle -> SetLabelSize(0.05, "X");
+  gStyle -> SetLabelSize(0.05, "Y");
+
+  padCvs = new TCanvas("padCvs", "", 1100, 550);
+  padCvs -> Divide(2, 1);
+  padCvs -> Draw();
 }

@@ -19,6 +19,7 @@
 #include "TCanvas.h"
 #include "TH2D.h"
 #include "TH1D.h"
+#include "TGraph.h"
 #include "TLine.h"
 
 class STPlot : public TObject
@@ -30,7 +31,7 @@ class STPlot : public TObject
     void SetAutodelete(Bool_t value);
     
     void DrawPadplane();
-    void DrawADC(Int_t padNo);
+    void DrawPad(Int_t row, Int_t layer);
     void DrawLayer(Int_t layer);
 
     // Setters
@@ -41,13 +42,18 @@ class STPlot : public TObject
   private:
     void Clear();
     void PreparePadplaneHist();
+    void PreparePadCanvas();
     Bool_t CheckEvent();
 
     Bool_t isAutodelete;
     STRawEvent *event;
+
     TCanvas *padplaneCvs;
     TH2D *padplaneHist;
-    TH1D *padHist;
+
+    TCanvas *padCvs;
+    TGraph *padGraph[2];
+
     TH2D *layerHist;
     TLine *horizLine[108];
     TLine *vertLine[112];
