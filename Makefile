@@ -6,8 +6,9 @@ make:
 	@ln -sf Source/STConverter/libSTData.so .
 	@ln -sf Source/STConverter/libSTCore.so .
 	@ln -sf Source/STConverter/libSTUtil.so .
-	@ln -sf Source/STConverter/mapping/UnitAsAd.map .
-	@ln -sf Source/STConverter/mapping/AGET.map .
+	@ln -sf Source/STConverter/mapping/UnitAsAd.map.BRAHMS.RCoBo .
+	@ln -sf Source/STConverter/mapping/UnitAsAd.map.BRAHMS.MCoBo .
+	@ln -sf Source/STConverter/mapping/AGET.map.SpiRIT-ZAP .
 	@g++ -fPIC --shared -o libSTConverter.so libSTData.so libSTCore.so libSTUtil.so libGETDecoder.so
 	@cp -rf Source/GETDecoder/examples GETDecoder_examples
 	@if [ ! -d "headers" ]; then mkdir headers; fi
@@ -20,7 +21,7 @@ clean:
 	cd Source/STConverter; make clean
 	@rm -f makeSummary
 	@rm -f *.so
-	@rm -f *.map
+	@rm -f *.map.*
 	@if [ -d "headers" ]; then (rm -f headers/*; rmdir headers;); fi
 
 summary:
