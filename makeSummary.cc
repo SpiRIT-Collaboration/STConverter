@@ -21,7 +21,7 @@ using std::cout;
 using std::endl;
 using std::setw;
 
-void makeSummary(TString grawFile);
+void makeSummary(Int_t numData, TString **grawFile, Int_t numTbs, Bool_t positivePolarity);
 void Print(ofstream &outFile,
               TTree *outTree,
               Int_t  coboIdx,
@@ -37,13 +37,13 @@ void Print(ofstream &outFile,
 Int_t wCoboIdx, wAsadIdx, wAgetIdx, wChIdx;
 Double_t wMean, wSigma, wSigmaWOFPN, wMaxADCMean, wMaxADCSigma;
 
-void makeSummary(TString grawFile, Int_t numTbs, Bool_t positivePolarity) {
+void makeSummary(Int_t numData, TString **grawFile, Int_t numTbs, Bool_t positivePolarity) {
 #ifdef __CINT__
   gSystem -> Load("libSTConverter.so");
 #endif
 
   // Create txt and root output file
-  TString outName = grawFile;
+  TString outName = grawFile[0] -> Data();
   TObjArray *elements = outName.Tokenize("/");
 
   Int_t lastIndex = elements -> GetLast();
@@ -80,10 +80,10 @@ void makeSummary(TString grawFile, Int_t numTbs, Bool_t positivePolarity) {
   for (Int_t iAsad = 0; iAsad < 3; iAsad++) {
     for (Int_t iAget = 0; iAget < 4; iAget++) {
       for (Int_t iCh = 0; iCh < 68; iCh++) {
-        hMean[iAsad][iAget][iCh] = new TH1D(Form("hMean_%d_%d_%d", iAsad, iAget, iCh), "", 1024, 0, 4096);
-        hSigma[iAsad][iAget][iCh] = new TH1D(Form("hSigma_%d_%d_%d", iAsad, iAget, iCh), "", 1056, -128, 4096);
-        hSigmaWOFPN[iAsad][iAget][iCh] = new TH1D(Form("hSigmaWOFPN_%d_%d_%d", iAsad, iAget, iCh), "", 1056, -128, 4096);
-        hMaxADCMean[iAsad][iAget][iCh] = new TH1D(Form("hMaxADCMean_%d_%d_%d", iAsad, iAget, iCh), "", 1024, 0, 4096);
+        hMean[iAsad][iAget][iCh] = new TH1D(Form("hMean_%d_%d_%d", iAsad, iAget, iCh), "", 4096, 0, 4096);
+        hSigma[iAsad][iAget][iCh] = new TH1D(Form("hSigma_%d_%d_%d", iAsad, iAget, iCh), "", 4224, -128, 4096);
+        hSigmaWOFPN[iAsad][iAget][iCh] = new TH1D(Form("hSigmaWOFPN_%d_%d_%d", iAsad, iAget, iCh), "", 4224, -128, 4096);
+        hMaxADCMean[iAsad][iAget][iCh] = new TH1D(Form("hMaxADCMean_%d_%d_%d", iAsad, iAget, iCh), "", 4096, 0, 4096);
       }
     }
   }
@@ -92,7 +92,11 @@ void makeSummary(TString grawFile, Int_t numTbs, Bool_t positivePolarity) {
   TH1D *aHist = new TH1D("adcHist", "", 4096, 0, 4096); // reused histogram
 
   // Load GRAW file and initialize mapping
-  GETDecoder *fDecoder = new GETDecoder(grawFile);
+  GETDecoder *fDecoder = new GETDecoder();
+  for (Int_t iData = 0; iData < numData; iData++)
+    fDecoder -> AddData(grawFile[iData] -> Data());
+
+  fDecoder -> SetData(0);
 
   fDecoder -> SetPositivePolarity(positivePolarity);
   fDecoder -> SetNumTbs(numTbs);
@@ -223,15 +227,18 @@ void Print(ofstream &outFile, TTree *outTree, Int_t coboIdx, Int_t asadIdx, Int_
 #ifndef __CINT__
 Int_t main(Int_t argc, Char_t **argv) {
   if (argc < 4) {
-    cout << "Usage: " << argv[0] << " NUMTBS  POLARITY(+:1, -:0)  FILENAME.graw" << endl;
+    cout << "Usage: " << argv[0] << " NUMTBS  POLARITY(+:1, -:0)  FILENAME.graw  [FILENAME2.graw ....]" << endl;
 
     return kFALSE;
   }
 
   Int_t numTbs = atoi(argv[1]);
   Bool_t positivePolarity = (Bool_t)atoi(argv[2]);
-  TString grawFile = argv[3];
-  makeSummary(grawFile, numTbs, positivePolarity);
+  TString **grawFile = new TString*[100];
+  Int_t numData = argc - 3;
+  for (Int_t iFile = 0; iFile < numData; iFile++)
+    grawFile[iFile] = new TString(argv[3 + iFile]);
+  makeSummary(numData, grawFile, numTbs, positivePolarity);
 
   return kFALSE;
 }
