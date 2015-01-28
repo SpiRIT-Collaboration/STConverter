@@ -72,18 +72,20 @@ void makeSummary(Int_t numData, TString **grawFile, Int_t numTbs, Bool_t positiv
   outTree -> Branch("maxADCSigma", &wMaxADCSigma, "wMaxADCSigma/D");
 
   // Initialize histograms
-  TH1D *hMean[3][4][68];
-  TH1D *hSigma[3][4][68];
-  TH1D *hSigmaWOFPN[3][4][68];
-  TH1D *hMaxADCMean[3][4][68];
+  TH1D *hMean[12][3][4][68];
+  TH1D *hSigma[12][3][4][68];
+  TH1D *hSigmaWOFPN[12][3][4][68];
+  TH1D *hMaxADCMean[12][3][4][68];
 
-  for (Int_t iAsad = 0; iAsad < 3; iAsad++) {
-    for (Int_t iAget = 0; iAget < 4; iAget++) {
-      for (Int_t iCh = 0; iCh < 68; iCh++) {
-        hMean[iAsad][iAget][iCh] = new TH1D(Form("hMean_%d_%d_%d", iAsad, iAget, iCh), "", 4096, 0, 4096);
-        hSigma[iAsad][iAget][iCh] = new TH1D(Form("hSigma_%d_%d_%d", iAsad, iAget, iCh), "", 4224, -128, 4096);
-        hSigmaWOFPN[iAsad][iAget][iCh] = new TH1D(Form("hSigmaWOFPN_%d_%d_%d", iAsad, iAget, iCh), "", 4224, -128, 4096);
-        hMaxADCMean[iAsad][iAget][iCh] = new TH1D(Form("hMaxADCMean_%d_%d_%d", iAsad, iAget, iCh), "", 4096, 0, 4096);
+  for (Int_t iCobo = 0; iCobo < 12; iCobo++) {
+    for (Int_t iAsad = 0; iAsad < 3; iAsad++) {
+      for (Int_t iAget = 0; iAget < 4; iAget++) {
+        for (Int_t iCh = 0; iCh < 68; iCh++) {
+          hMean[iCobo][iAsad][iAget][iCh] = new TH1D(Form("hMean_%d_%d_%d_%d", iCobo, iAsad, iAget, iCh), "", 4096, 0, 4096);
+          hSigma[iCobo][iAsad][iAget][iCh] = new TH1D(Form("hSigma_%d_%d_%d_%d", iCobo, iAsad, iAget, iCh), "", 4224, -128, 4096);
+          hSigmaWOFPN[iCobo][iAsad][iAget][iCh] = new TH1D(Form("hSigmaWOFPN_%d_%d_%d_%d", iCobo, iAsad, iAget, iCh), "", 4224, -128, 4096);
+          hMaxADCMean[iCobo][iAsad][iAget][iCh] = new TH1D(Form("hMaxADCMean_%d_%d_%d_%d", iCobo, iAsad, iAget, iCh), "", 4096, 0, 4096);
+        }
       }
     }
   }
@@ -130,10 +132,10 @@ void makeSummary(Int_t numData, TString **grawFile, Int_t numTbs, Bool_t positiv
 
         for (Int_t iAdc = 1; iAdc < numTbs - 1; iAdc++) {
           raHist -> Fill(rawAdc[iAdc]);
-          hSigma[asadIdx][iAget][iCh] -> Fill(rawAdc[iAdc]); // <-- Sigma
+          hSigma[coboIdx][asadIdx][iAget][iCh] -> Fill(rawAdc[iAdc]); // <-- Sigma
 
           aHist -> Fill(adc[iAdc]);
-          hSigmaWOFPN[asadIdx][iAget][iCh] -> Fill(adc[iAdc]); // <-- FPN-subtracted Sigma
+          hSigmaWOFPN[coboIdx][asadIdx][iAget][iCh] -> Fill(adc[iAdc]); // <-- FPN-subtracted Sigma
         }
 
 /*
@@ -142,7 +144,7 @@ void makeSummary(Int_t numData, TString **grawFile, Int_t numTbs, Bool_t positiv
         Double_t mean = ((TF1 *) raHist -> GetFunction("gaus")) -> GetParameter(1);
 */
         Double_t mean = raHist -> GetMean();
-        hMean[asadIdx][iAget][iCh] -> Fill(mean); // <-- Mean
+        hMean[coboIdx][asadIdx][iAget][iCh] -> Fill(mean); // <-- Mean
 
         Double_t maxADC = 0;
         for (Int_t iTb = 1; iTb < numTbs - 1; iTb++) {
@@ -150,7 +152,7 @@ void makeSummary(Int_t numData, TString **grawFile, Int_t numTbs, Bool_t positiv
           if (temp > maxADC)
             maxADC = temp;
         }
-        hMaxADCMean[asadIdx][iAget][iCh] -> Fill(maxADC);
+        hMaxADCMean[coboIdx][asadIdx][iAget][iCh] -> Fill(maxADC);
 //        }
       }
     }
@@ -159,45 +161,47 @@ void makeSummary(Int_t numData, TString **grawFile, Int_t numTbs, Bool_t positiv
   delete raHist;
   delete aHist;
 
-  for (Int_t iAsad = 0; iAsad < 3; iAsad++) {
-    for (Int_t iAget = 0; iAget < 4; iAget++) {
-      for (Int_t iCh = 0; iCh < 68; iCh++) {
-        Double_t mean = 0;
-        if (hMean[iAsad][iAget][iCh] -> GetEntries()) {
-//          hMean[iAsad][iAget][iCh] -> Fit("gaus", "0Q");
-//          mean = ((TF1 *) hMean[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(1);
-          mean = hMean[iAsad][iAget][iCh] -> GetMean();
+  for (Int_t iCobo = 0; iCobo < 12; iCobo++) {
+    for (Int_t iAsad = 0; iAsad < 3; iAsad++) {
+      for (Int_t iAget = 0; iAget < 4; iAget++) {
+        for (Int_t iCh = 0; iCh < 68; iCh++) {
+          Double_t mean = 0;
+          if (hMean[iCobo][iAsad][iAget][iCh] -> GetEntries()) {
+  //          hMean[iAsad][iAget][iCh] -> Fit("gaus", "0Q");
+  //          mean = ((TF1 *) hMean[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(1);
+            mean = hMean[iCobo][iAsad][iAget][iCh] -> GetMean();
+          }
+
+          Double_t sigma = 0;
+          if (hSigma[iCobo][iAsad][iAget][iCh] -> GetEntries()) {
+  //          hSigma[iAsad][iAget][iCh] -> Fit("gaus", "0Q");
+  //          sigma = ((TF1 *) hSigma[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(2);
+            sigma = hSigma[iCobo][iAsad][iAget][iCh] -> GetRMS();
+          }
+
+          Double_t sigmaWOFPN = 0;
+          if (hSigmaWOFPN[iCobo][iAsad][iAget][iCh] -> GetEntries()) {
+  //          hSigmaWOFPN[iAsad][iAget][iCh] -> Fit("gaus", "0Q");
+  //          sigmaWOFPN = ((TF1 *) hSigmaWOFPN[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(2);
+            sigmaWOFPN = hSigmaWOFPN[iCobo][iAsad][iAget][iCh] -> GetRMS();
+          }
+
+          Double_t maxADCMean = 0;
+          Double_t maxADCSigma = 0;
+          if (hMaxADCMean[iCobo][iAsad][iAget][iCh] -> GetEntries()) {
+  //          hMaxADCMean[iAsad][iAget][iCh] -> Fit("gaus", "0Q");
+  //          maxADCMean = ((TF1 *) hMaxADCMean[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(1);
+  //          maxADCSigma = ((TF1 *) hMaxADCMean[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(2);
+            maxADCMean = hMaxADCMean[iCobo][iAsad][iAget][iCh] -> GetMean();
+            maxADCSigma = hMaxADCMean[iCobo][iAsad][iAget][iCh] -> GetRMS();
+          }
+
+          // M-CoBo
+          Print(outFile, outTree, iCobo, iAsad, iAget, iCh, mean, sigma, sigmaWOFPN, maxADCMean, maxADCSigma);
+
+          // R-CoBo
+  //        Print(outFile, outTree, iAsad, 0, iAget, iCh, mean, sigma, sigmaWOFPN, maxADCMean, maxADCSigma);
         }
-
-        Double_t sigma = 0;
-        if (hSigma[iAsad][iAget][iCh] -> GetEntries()) {
-//          hSigma[iAsad][iAget][iCh] -> Fit("gaus", "0Q");
-//          sigma = ((TF1 *) hSigma[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(2);
-          sigma = hSigma[iAsad][iAget][iCh] -> GetRMS();
-        }
-
-        Double_t sigmaWOFPN = 0;
-        if (hSigmaWOFPN[iAsad][iAget][iCh] -> GetEntries()) {
-//          hSigmaWOFPN[iAsad][iAget][iCh] -> Fit("gaus", "0Q");
-//          sigmaWOFPN = ((TF1 *) hSigmaWOFPN[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(2);
-          sigmaWOFPN = hSigmaWOFPN[iAsad][iAget][iCh] -> GetRMS();
-        }
-
-        Double_t maxADCMean = 0;
-        Double_t maxADCSigma = 0;
-        if (hMaxADCMean[iAsad][iAget][iCh] -> GetEntries()) {
-//          hMaxADCMean[iAsad][iAget][iCh] -> Fit("gaus", "0Q");
-//          maxADCMean = ((TF1 *) hMaxADCMean[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(1);
-//          maxADCSigma = ((TF1 *) hMaxADCMean[iAsad][iAget][iCh] -> GetFunction("gaus")) -> GetParameter(2);
-          maxADCMean = hMaxADCMean[iAsad][iAget][iCh] -> GetMean();
-          maxADCSigma = hMaxADCMean[iAsad][iAget][iCh] -> GetRMS();
-        }
-
-        // M-CoBo
-        Print(outFile, outTree, 0, iAsad, iAget, iCh, mean, sigma, sigmaWOFPN, maxADCMean, maxADCSigma);
-
-        // R-CoBo
-//        Print(outFile, outTree, iAsad, 0, iAget, iCh, mean, sigma, sigmaWOFPN, maxADCMean, maxADCSigma);
       }
     }
   }
