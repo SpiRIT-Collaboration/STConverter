@@ -78,7 +78,7 @@ void makeSummary(Int_t numData, TString **grawFile, Int_t numTbs, Bool_t positiv
   TH1D *hMaxADCMean[12][3][4][68];
 
   for (Int_t iCobo = 0; iCobo < 12; iCobo++) {
-    for (Int_t iAsad = 0; iAsad < 3; iAsad++) {
+    for (Int_t iAsad = 0; iAsad < 4; iAsad++) {
       for (Int_t iAget = 0; iAget < 4; iAget++) {
         for (Int_t iCh = 0; iCh < 68; iCh++) {
           hMean[iCobo][iAsad][iAget][iCh] = new TH1D(Form("hMean_%d_%d_%d_%d", iCobo, iAsad, iAget, iCh), "", 4096, 0, 4096);
@@ -162,7 +162,7 @@ void makeSummary(Int_t numData, TString **grawFile, Int_t numTbs, Bool_t positiv
   delete aHist;
 
   for (Int_t iCobo = 0; iCobo < 12; iCobo++) {
-    for (Int_t iAsad = 0; iAsad < 3; iAsad++) {
+    for (Int_t iAsad = 0; iAsad < 4; iAsad++) {
       for (Int_t iAget = 0; iAget < 4; iAget++) {
         for (Int_t iCh = 0; iCh < 68; iCh++) {
           Double_t mean = 0;
