@@ -72,10 +72,10 @@ void makeSummary(Int_t numData, TString **grawFile, Int_t numTbs, Bool_t positiv
   outTree -> Branch("maxADCSigma", &wMaxADCSigma, "wMaxADCSigma/D");
 
   // Initialize histograms
-  TH1D *hMean[12][3][4][68];
-  TH1D *hSigma[12][3][4][68];
-  TH1D *hSigmaWOFPN[12][3][4][68];
-  TH1D *hMaxADCMean[12][3][4][68];
+  TH1D *hMean[12][4][4][68];
+  TH1D *hSigma[12][4][4][68];
+  TH1D *hSigmaWOFPN[12][4][4][68];
+  TH1D *hMaxADCMean[12][4][4][68];
 
   for (Int_t iCobo = 0; iCobo < 12; iCobo++) {
     for (Int_t iAsad = 0; iAsad < 4; iAsad++) {
