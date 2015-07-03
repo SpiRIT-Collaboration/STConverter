@@ -1,5 +1,5 @@
 ROOT_CFLAGS = $(shell root-config --cflags)
-ROOT_LIBS = $(shell root-config --libs) -lSpectrum
+ROOT_LIBS = $(shell root-config --libs)
 CXX = g++
 
 PREFIX = ST
