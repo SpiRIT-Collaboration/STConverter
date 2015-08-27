@@ -17,22 +17,28 @@
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TLine.h"
-#include "Riostream.h"
 
-ClassImp(STPlot);
+#include <iostream>
+
+ClassImp(STPlot)
 
 STPlot::STPlot()
 {
   Clear();
 }
 
+STPlot::STPlot(STCore *core)
+{
+  Clear();
+
+  fCore = core;
+  SetNumTbs(fCore -> GetNumTbs());
+}
+
 void STPlot::Clear()
 {
-//  if (padplaneHist)
- //   delete padplaneHist;
-
-  isAutodelete = kFALSE;
-  event = NULL;
+  fEvent = NULL;
+  fNumTbs = 512;
 
   padplaneCvs = NULL;
   padplaneHist = NULL;
@@ -42,15 +48,10 @@ void STPlot::Clear()
   padGraph[1] = NULL;
 }
 
-void STPlot::SetAutodelete(Bool_t value)
-{
-  isAutodelete = value;
-}
-
 Bool_t STPlot::CheckEvent()
 {
-  if (event == NULL) {
-    cerr << "Event is not set!" << endl;
+  if (fEvent == NULL) {
+    std::cerr << "= [STPlot] Event is not set!" << std::endl;
     return 1;
   }
 
@@ -60,39 +61,42 @@ Bool_t STPlot::CheckEvent()
 // Setters
 void STPlot::SetEvent(STRawEvent *anEvent)
 {
-  Clear();
+  fEvent = anEvent;
 
-  event = anEvent;
+  std::cerr << "= [STPlot] Default number of time buckets is 512." << std::endl;
+}
+
+void STPlot::SetNumTbs(Int_t numTbs)
+{
+  fNumTbs = numTbs;
 }
 
 void STPlot::DrawPadplane()
 {
-  if (padplaneHist)
-    return;
-
   if (CheckEvent())
     return;
 
-  PreparePadplaneHist();
+  if (padplaneHist)
+    padplaneHist -> Reset();
+  else
+    PreparePadplaneHist();
 
-  Int_t numPads = event -> GetNumPads();
+  Int_t numPads = fEvent -> GetNumPads();
   Double_t max = 0;
 
   for (Int_t iPad = 0; iPad < numPads; iPad++) {
-    STPad *aPad = event -> GetPad(iPad);
+    STPad *aPad = fEvent -> GetPad(iPad);
 
     Double_t *adc = aPad -> GetADC();
 
     Double_t maxADC = 0;
-    for (Int_t i = 0; i < 512; i++) {
+    for (Int_t i = 0; i < fNumTbs; i++) {
       if (maxADC < aPad -> GetADC(i))
         maxADC = aPad -> GetADC(i);
     }
 
     padplaneHist -> SetBinContent(aPad -> GetLayer() + 1, aPad -> GetRow() + 1, maxADC);
-    if(maxADC > max) max = maxADC;
-//    padplaneHist -> SetBinContent(aPad -> GetRow() + 1, aPad -> GetLayer() + 1, aPad -> GetADC(aPad -> GetMaxADCIdx()));
-//    if(aPad -> GetADC(aPad -> GetMaxADCIdx()) > max) max = aPad -> GetADC(aPad -> GetMaxADCIdx());
+    if (maxADC > max) max = maxADC;
   }
 
   padplaneHist -> SetMaximum(max);
@@ -100,30 +104,31 @@ void STPlot::DrawPadplane()
 
 void STPlot::DrawPad(Int_t row, Int_t layer)
 {
-  if (!padCvs)
+  if (padCvs == NULL)
     PreparePadCanvas();
-
-  if (padGraph[0] && padGraph[1] && isAutodelete) {
-    delete padGraph[0];
-    delete padGraph[1];
+  else {
+    padGraph[0] -> Set(0);
+    padGraph[1] -> Set(0);
   }
 
   if (CheckEvent())
     return;
 
-  STPad *pad = event -> GetPad(row, layer);
-  if (!pad)
+  STPad *pad = fEvent -> GetPad(row, layer);
+  if (!pad) {
+    std::cerr << "= [STPlot] There's no pad (" << row << ", " << layer << ")!" << std::endl;
     return;
+  }
 
   Int_t *tempRawAdc = pad -> GetRawADC();
   Double_t tb[512] = {0};
   Double_t rawAdc[512] = {0};
-  for (Int_t iTb = 0; iTb < 512; iTb++) {
+  for (Int_t iTb = 0; iTb < fNumTbs; iTb++) {
     tb[iTb] = iTb;
     rawAdc[iTb] = tempRawAdc[iTb];
   }
 
-  padGraph[0] = new TGraph(512, tb, rawAdc);
+  padGraph[0] = new TGraph(fNumTbs, tb, rawAdc);
   padGraph[0] -> SetTitle(Form("Raw ADC - (%d, %d)", row, layer));
   padGraph[0] -> SetLineColor(2);
   padGraph[0] -> GetHistogram() -> GetXaxis() -> SetTitle("Time bucket");
@@ -137,7 +142,7 @@ void STPlot::DrawPad(Int_t row, Int_t layer)
   padGraph[0] -> Draw("AL");
 
   Double_t *adc = pad -> GetADC();
-  padGraph[1] = new TGraph(512, tb, adc);
+  padGraph[1] = new TGraph(fNumTbs, tb, adc);
   padGraph[1] -> SetTitle(Form("ADC(FPN pedestal subtracted) - (%d, %d)", row, layer));
   padGraph[1] -> SetLineColor(2);
   padGraph[1] -> GetHistogram() -> GetXaxis() -> SetTitle("Time bucket");
@@ -153,7 +158,9 @@ void STPlot::DrawPad(Int_t row, Int_t layer)
 
 void STPlot::DrawLayer(Int_t layerNo)
 {
-  if (layerHist && isAutodelete)
+  std::cerr << "= [STPlot] Not Implemented!" << std::endl;
+
+  if (layerHist != NULL)
     delete layerHist;
 
   if (CheckEvent())
@@ -171,47 +178,55 @@ void STPlot::PreparePadplaneHist()
     gStyle -> SetOptStat(0000);
     gStyle -> SetPadRightMargin(0.08);
     gStyle -> SetPadLeftMargin(0.06);
-    gStyle -> SetPadTopMargin(0.08);
+    gStyle -> SetPadTopMargin(0.04);
     gStyle -> SetPadBottomMargin(0.08);
     gStyle -> SetTitleOffset(1.0, "X");
     gStyle -> SetTitleOffset(0.85, "Y");
 
-/*
-    timePad = new TPad("timePad", "Time Plane Display", 0.5, 0, 1, 1);
-    timePad -> Divide(2, 2);
-    timePad -> Draw();
-*/
-    
     padplaneCvs -> cd();
-    padplaneHist = new TH2D("padplaneHist", "Pad Plane", 112, 0, 1344, 108, -432, 432);
-//        padplane -> GetYaxis() -> SetNdivisions(15, kTRUE);
-        padplaneHist -> GetXaxis() -> SetTickLength(0.01);
-        padplaneHist -> GetXaxis() -> SetTitle("z (mm)");
-        padplaneHist -> GetXaxis() -> CenterTitle();
-        padplaneHist -> GetYaxis() -> SetTickLength(0.01);
-        padplaneHist -> GetYaxis() -> SetTitle("x (mm)");
-        padplaneHist -> GetYaxis() -> CenterTitle();
-        padplaneHist -> Draw("colz");
+    padplaneHist = new TH2D("padplaneHist", ";x (mm);z (mm)", 112, 0, 1344, 108, -432, 432);
+    padplaneHist -> GetXaxis() -> SetTickLength(0.01);
+    padplaneHist -> GetXaxis() -> CenterTitle();
+    padplaneHist -> GetYaxis() -> SetTickLength(0.01);
+    padplaneHist -> GetYaxis() -> CenterTitle();
+    padplaneHist -> Draw("colz");
 
     Double_t padLX = 8; // mm
     Double_t padLZ = 12; // mm
 
+    Double_t x[2], y[2];
     for (Int_t i = 0; i < 107; i++) {
-        horizLine[i] = new TLine(0, -432 + (i + 1)*padLX, 1344, -432 + (i + 1)*padLX);
-        if ((i + 1)%9 == 0)
-            horizLine[i] -> SetLineStyle(1);
-        else
-            horizLine[i] -> SetLineStyle(3);
-        horizLine[i] -> Draw("same");
+      x[0] = 0;
+      x[1] = 1344;
+      y[0] = -432 + (i + 1)*padLX;
+      y[1] = -432 + (i + 1)*padLX;
+
+      TGraph *graph = new TGraph(2, x, y);
+      graph -> SetEditable(kFALSE);
+
+      if ((i + 1)%9 == 0)
+        graph -> SetLineStyle(1);
+      else
+        graph -> SetLineStyle(3);
+
+      graph -> Draw("L SAME");
     }
 
     for (Int_t i = 0; i < 111; i++) {
-        vertLine[i] = new TLine((i + 1)*padLZ, -432, (i + 1)*padLZ, 432);
-        if ((i + 1)%7 == 0)
-            vertLine[i] -> SetLineStyle(1);
-        else
-            vertLine[i] -> SetLineStyle(3);
-        vertLine[i] -> Draw("same");
+      x[0] = (i + 1)*padLZ;
+      x[1] = (i + 1)*padLZ;
+      y[0] = -432;
+      y[1] = -432;
+
+      TGraph *graph = new TGraph(2, x, y);
+      graph -> SetEditable(kFALSE);
+
+      if ((i + 1)%7 == 0)
+          graph -> SetLineStyle(1);
+      else
+          graph -> SetLineStyle(3);
+
+      graph -> Draw("L SAME");
     }
 }
 

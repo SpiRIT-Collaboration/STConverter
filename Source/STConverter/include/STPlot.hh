@@ -13,6 +13,7 @@
 
 #include "TROOT.h"
 
+#include "STCore.hh"
 #include "STRawEvent.hh"
 #include "STPad.hh"
 
@@ -20,33 +21,36 @@
 #include "TH2D.h"
 #include "TH1D.h"
 #include "TGraph.h"
-#include "TLine.h"
+
+class STCore;
 
 class STPlot : public TObject
 {
   public:
     STPlot();
+    STPlot(STCore *core);
     ~STPlot() {};
 
-    void SetAutodelete(Bool_t value);
-    
     void DrawPadplane();
     void DrawPad(Int_t row, Int_t layer);
     void DrawLayer(Int_t layer);
 
     // Setters
     void SetEvent(STRawEvent *anEvent);
+    void SetNumTbs(Int_t numTbs);
 
     // Getters
 
   private:
+    STCore *fCore;
+
     void Clear();
     void PreparePadplaneHist();
     void PreparePadCanvas();
     Bool_t CheckEvent();
 
-    Bool_t isAutodelete;
-    STRawEvent *event;
+    STRawEvent *fEvent;
+    Int_t fNumTbs;
 
     TCanvas *padplaneCvs;
     TH2D *padplaneHist;
@@ -55,8 +59,6 @@ class STPlot : public TObject
     TGraph *padGraph[2];
 
     TH2D *layerHist;
-    TLine *horizLine[108];
-    TLine *vertLine[112];
 
   ClassDef(STPlot, 1);
 };
