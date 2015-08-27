@@ -216,7 +216,7 @@ void STPlot::PreparePadplaneHist()
       x[0] = (i + 1)*padLZ;
       x[1] = (i + 1)*padLZ;
       y[0] = -432;
-      y[1] = -432;
+      y[1] = 432;
 
       TGraph *graph = new TGraph(2, x, y);
       graph -> SetEditable(kFALSE);
