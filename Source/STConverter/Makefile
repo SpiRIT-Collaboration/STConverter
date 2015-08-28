@@ -6,7 +6,7 @@ PREFIX = ST
 SRCDIR = src
 INCDIR = include
 
-GETDECODER = ../GETDecoder
+GETDECODER = $(PWD)/../GETDecoder
 
 LIBNAME = STCore
 TARGET = lib$(LIBNAME)
