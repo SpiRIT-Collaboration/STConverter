@@ -20,5 +20,6 @@
 #pragma link C++ class STMapConverter;
 #pragma link C++ class STGenerator;
 #pragma link C++ class STGainCheck;
+#pragma link C++ class STParReader;
 
 #endif
