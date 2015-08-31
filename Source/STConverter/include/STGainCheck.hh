@@ -8,7 +8,8 @@
 //  2014. 09. 07
 // =================================================
 
-#pragma once
+#ifndef STGAINCHECK
+#define STGAINCHECK
 
 #include "TObject.h"
 #include "TString.h"
@@ -16,6 +17,7 @@
 #include "TH2D.h"
 
 #include "STCore.hh"
+#include "STParReader.hh"
 
 #include <vector>
 
@@ -41,9 +43,6 @@ class STGainCheck : public TObject
     Bool_t SetParameterDir(TString dir);
 
   private:
-    Int_t GetIntParameter(TString parameter);
-    TString GetFileParameter(Int_t index);
-
     Int_t GetPadIndex(Int_t row, Int_t layer);
 
     TCanvas *fCanvas;
@@ -60,12 +59,14 @@ class STGainCheck : public TObject
     Int_t fMaxLayer;
     TString fPadName[252];
 
-    TString fParameterFile;
+    STParReader *fParReader;
     Int_t fNumTbs;
     Int_t fRows;
     Int_t fLayers;
-    Int_t fPadX;
-    Int_t fPadZ;
+    Double_t fPadX;
+    Double_t fPadZ;
 
   ClassDef(STGainCheck, 1)
 };
+
+#endif
