@@ -21,5 +21,6 @@
 #pragma link C++ class STGenerator;
 #pragma link C++ class STGainCheck;
 #pragma link C++ class STParReader;
+#pragma link C++ class STStatic;
 
 #endif
