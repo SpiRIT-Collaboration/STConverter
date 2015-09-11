@@ -21,6 +21,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TH1D.h"
+#include "TGraph.h"
 #include "TGraphErrors.h"
 #include "TF1.h"
 
@@ -316,19 +317,6 @@ STGenerator::GeneratePedestalData()
   
   GETMath *math = new GETMath();
 
-  /*
-  GETMath ****math = new GETMath***[fRows];
-  for (iRow = 0; iRow < fRows; iRow++) {
-    math[iRow] = new GETMath**[fLayers];
-    for (iLayer = 0; iLayer < fLayers; iLayer++) {
-      math[iRow][iLayer] = new GETMath*[fNumTbs];
-      for (Int_t iTb = 0; iTb < fNumTbs; iTb++) {
-        math[iRow][iLayer][iTb] = new GETMath();
-      }
-    }
-  }
-  */
-
   Double_t rmsSum = 0;
   Int_t storeEventID = 0;
   Int_t excluded = 0;
@@ -555,7 +543,7 @@ STGenerator::GenerateGainCalibrationData()
       for (Int_t iVoltage = 0; iVoltage < numVoltages; iVoltage++)
         dummyError[iVoltage] = 1.E-5;
 
-      TGraphErrors *aPad = new TGraphErrors(numVoltages, means, voltages, sigmas, dummyError);
+      TGraph *aPad = new TGraph(numVoltages, means, voltages);
 #else
       TGraphErrors *aPad = new TGraphErrors(numVoltages, voltages, means, 0, sigmas);
 #endif
